@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+html, :root {
+  color: $color-text;
+  box-sizing: border-box;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "palt";
+  -webkit-font-feature-settings: "palt";
+
+  font-family: 'Noto Sans JP', sans-serif;
+
+  font-size: 16px; //=1rem
+  line-height: 2;
+}
+
+em {
+}
+
+h1, h2, h3, h4, h5, h6 {
+}
+
+h1 {
+}
+
+h2 {
+}
+
+h3 {
+}
+
+h4 {
+}
+
+h5, h6 {
+}
+
+@include mediaquery-not-sm {
+  p {
+  }
+}
+
+@include mediaquery-sm {
+  p {
+  }
+}
+
+b, strong {
+}

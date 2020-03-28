@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",
-    "generate": "nuxt-ts generate",
+    "gen": "nuxt-ts generate",
     "start": "nuxt-ts start"
   },
   "dependencies": {
@@ -16,6 +16,13 @@
     "@nuxtjs/pwa": "^3.0.0-0"
   },
   "devDependencies": {
-    "@nuxt/typescript-build": "^0.6.0"
+    "@nuxt/typescript-build": "^0.6.0",
+    "@nuxtjs/style-resources": "^1.0.0",
+    "node-sass": "^4.13.1",
+    "nuxt-property-decorator": "^2.5.1",
+    "pug": "^2.0.4",
+    "pug-loader": "^2.4.0",
+    "pug-plain-loader": "^1.0.0",
+    "sass-loader": "^8.0.2"
   }
 }

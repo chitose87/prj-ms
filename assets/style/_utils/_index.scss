@@ -1,0 +1,225 @@
+@import "color";
+@import "mediaquery";
+@import "screen";
+@import "zindex";
+@import "ease";
+
+// size
+$size-container: 1010px;
+
+$size-col: (
+  1: calc(100% / 12 - 0.01px),
+  2: calc(100% / 6 - 0.01px),
+  3: 25%,
+  4: calc(100% / 3 - 0.01px),
+  5: calc(100% / 2.4 - 0.01px),
+  6: 50%,
+  7: calc(100% / 12 * 7 - 0.01px),
+  8: calc(100% / 1.5 - 0.01px),
+  9: 75%,
+  10: calc(100% / 1.2 - 0.01px),
+  11: calc(100% / 12 * 11 - 0.01px),
+  12: 100%
+);
+
+@mixin col($v) {
+  //-ms-flex: 0 $v;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: map-get($size-col, $v);
+  max-width: map-get($size-col, $v);
+}
+
+// time
+$tick: 0.4s;
+
+// effect
+$shadow: 0 0 26px rgba(0, 0, 0, 0.08) !default;
+//$shadow-inset: 0 12px 5px -10px rgba(0, 0, 0, 0.4) inset !default;
+//$shadow-zero: 0 0 0 rgba(0, 0, 0, 0.4) !default;
+//$shadow-depth--1: 0 3px 4px rgba(0, 0, 0, 0.5);
+
+$shadow-text-black: 0 1px 3px rgba($color-black, 0.3), 0 0 20px rgba($color-black, 0.5);
+$shadow-text-white: 0 1px 2px rgba($color-white, 0.5), 0 2px 20px rgba($color-white, 1);
+
+//bootstrap.sass value
+$gutter: 2rem;
+$grid-gutter-width: $gutter;
+$grid-columns: 12;
+
+@mixin ie11($selector) {
+  _:-ms-lang(x)::-ms-backdrop, #{$selector} {
+    /* todo ie11 hack */
+    @content;
+  }
+}
+
+@mixin ie11-cover($selector) {
+  @include ie11($selector) {
+    position: absolute;
+    //width: auto;
+    //height: auto;
+    top: 50%;
+    left: 50%;
+    min-height: 100%;
+    min-width: 100%;
+    transform: translateX(-50%) translateY(-50%);
+    @content;
+  }
+}
+
+@mixin ff($selector) {
+  @-moz-document url-prefix() {
+    #{$selector} {
+      @content;
+    }
+  }
+}
+
+// icon
+
+@mixin cross($w, $h, $color, $deg,$noPosition) {
+  &:before, &:after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    background-color: $color;
+    width: $w;
+    height: $h;
+    @if $noPosition==false {
+      top: 50%;
+      left: 50%;
+    }
+    @content;
+  }
+  &:before {
+    transform: translateX(-50%) rotate($deg);
+  }
+  &:after {
+    transform: translateX(-50%) rotate($deg + 90deg);
+  }
+}
+
+@mixin clamp($num,$lh:1.75) {
+  max-height: #{$num*$lh}em; //fall back
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $num;
+}
+
+@mixin arrow($size,$w,$color:false) {
+  content: "";
+  display: block;
+  height: $size;
+  width: $size;
+  border-top-width: $w;
+  border-right-width: $w;
+
+  border-top-style: solid;
+  border-right-style: solid;
+
+  @if ($color) {
+    border-top-color: $color;
+    border-right-color: $color;
+  }
+}
+
+@mixin arrow-right($size,$w,$color:false) {
+  @include arrow($size, $w, $color);
+  transform: rotate(45deg);
+  transform-origin: top right;
+  margin-top: -1px;
+}
+
+@mixin _icon() {
+  //font-family: "fontello", serif;
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+}
+
+@mixin icon-arrow-down {
+  @include _icon;
+  content: '\e800';
+}
+
+@mixin icon-arrow-left {
+  @include _icon;
+  content: '\e801';
+}
+
+@mixin icon-arrow_right {
+  @include _icon;
+  content: '>';
+}
+
+@mixin icon-arrow_upper {
+  @include _icon;
+  content: '\e803';
+}
+
+@mixin icon-blank {
+  @include _icon;
+  content: '\e804';
+}
+
+@mixin icon-document {
+  @include _icon;
+  content: '\e805';
+}
+
+@mixin icon-download {
+  @include _icon;
+  content: '\e806';
+}
+
+@mixin icon-file {
+  @include _icon;
+  content: '\e807';
+}
+
+@mixin icon-hamburger {
+  @include _icon;
+  content: '\e808';
+}
+
+@mixin icon-search {
+  @include _icon;
+  content: '\e809';
+}
+
+@mixin icon-share {
+  @include _icon;
+  content: '\e80a';
+}
+
+//utils
+
+@mixin dummy($path,$w,$h) {
+  position: relative;
+  &:before {
+    content: "";
+    display: block;
+    pointer-events: none;
+    background-image: url($path);
+    background-size: #{$w}px #{$h}px;
+    background-repeat: no-repeat;
+    background-position: center top;
+    opacity: 0.2;
+    z-index: 9999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: #{$h}px;
+  }
+}
+
+@mixin font-weight-bold {
+  font-family: "Clarimo UD PE DemiBold", "UD Shin Go Conde90 DB JIS2004";
+}
+
+@mixin font-weight-normal {
+  font-family: "Clarimo UD PE Regular", "UD Shin Go Regular JIS2004";
+}

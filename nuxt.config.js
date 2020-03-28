@@ -23,6 +23,7 @@ export default {
   ** Global CSS
   */
   css: [
+    '~/assets/style/common.scss',
   ],
   /*
   ** Plugins to load before mounting the App
@@ -39,8 +40,14 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/style-resources',
     '@nuxtjs/pwa',
   ],
+  styleResources: {
+    scss: [
+      '~/assets/style/_utils/_index.scss',
+    ]
+  },
   /*
   ** Build configuration
   */
@@ -49,6 +56,12 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+    },
+    babel: {
+      plugins: [
+        ["@babel/plugin-proposal-decorators", {legacy: true}],
+        ["@babel/plugin-proposal-class-properties", {loose: true}]
+      ]
     }
   }
 }

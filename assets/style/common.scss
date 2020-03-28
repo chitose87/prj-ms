@@ -1,0 +1,51 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+@import "font-style";
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+
+  width: 100%;
+}
+
+.container-fluid {
+  width: 100%;
+}
+
+@include mediaquery-not-sm {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  .container {
+    max-width: $size-container;
+  }
+  .isSp {
+    display: none !important;
+  }
+}
+
+@include mediaquery-sm {
+  .container {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .isPc {
+    display: none !important;
+  }
+}
+
