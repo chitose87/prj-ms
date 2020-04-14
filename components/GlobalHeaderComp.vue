@@ -3,14 +3,12 @@
     .container
       p Project Name
 
-      button(v-on:click="singOut") SingOut
-      button(v-on:click="singIn") SingIn
+      div
+        input(type="text",v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
+        nuxt-link(:to="{name:'sheetID',params:{sheetID:sheetID}}") Move
+
       .user
-        .body(v-if="hoge()")
-          //
-            img(:src="$store.getters.user.photoURL")
-            p {{$store.getters.user.displayName}}
-            p {{$store.getters.user.email}}
+        .body(v-if="isLogin()")
           button(v-on:click="singOut") SingOut
 
         .body(v-else)
@@ -20,22 +18,29 @@
 
 <script lang="ts">
   import {Component, Vue} from "~/node_modules/nuxt-property-decorator";
-  import {Singleton} from "~/assets/script/Singleton";
   import {loginStore} from "~/utils/store-accessor";
+  import GapiMgr from "~/utils/GapiMgr";
 
   @Component({
     components: {}
   })
   export default class GlobalHeaderComp extends Vue {
-    hoge(){
+    sheetID = "";
+
+    mounted() {
+      this.sheetID = this.$route.params.sheetID;
+    }
+
+    isLogin() {
       return loginStore.status
     }
+
     singIn() {
-      gapi.auth2.getAuthInstance().signIn();
+      GapiMgr.signIn();
     }
 
     singOut() {
-      gapi.auth2.getAuthInstance().signOut();
+      GapiMgr.signOut();
     }
   }
 </script>
@@ -45,5 +50,12 @@
     height: 3rem;
     background-color: $color-black;
     color: $color-white;
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
   }
 </style>

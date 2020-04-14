@@ -10,7 +10,7 @@ export default class Login extends VuexModule {
     this.login = flag;
   }
 
-  get status() {
+  get   status() {
     return this.login;
   }
 }

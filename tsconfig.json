@@ -26,8 +26,9 @@
     "types": [
       "@types/node",
       "@nuxt/types",
-      "gapi",
-      "gapi.auth2"
+      "gapi.client.sheets",
+      "gapi.auth2",
+      "gapi"
     ]
   },
   "exclude": [
