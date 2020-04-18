@@ -1,4 +1,4 @@
-import {loginStore} from "~/utils/store-accessor";
+import {loginStore, userStore} from "~/utils/store-accessor";
 
 gapi.load('client:auth2', () => {
   gapi.client.init({
@@ -16,5 +16,10 @@ gapi.load('client:auth2', () => {
 
 function changeLogin(flag: boolean) {
   loginStore.change(flag);
-  console.log("changeLogin",flag)
+  console.log("changeLogin", flag);
+  if (flag) {
+    let user = gapi.auth2.getAuthInstance().currentUser.get();
+    let profile = user.getBasicProfile();
+    userStore.update({name:profile.getName(), email:profile.getEmail()});
+  }
 }

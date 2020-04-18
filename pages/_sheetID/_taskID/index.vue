@@ -1,12 +1,15 @@
 <template lang="pug">
-  .task-page
-    div(v-if="getData()")
+  .task-page.pt-4.pb-4.h-100
+    .container-fluid.h-100(v-if="getData()")
+      .title.form-group
+        input.form-control.font-weight-bolder(type="text" v-model="data.title")
+      .description.form-group.flex-grow-1
+        textarea.form-control(v-model="data.description")
+
       span(v-html="data.taskId")
       span(v-html="data.projectId")
       span(v-html="data.category")
       span(v-html="data.tags")
-      input(type="text" v-model="data.title")
-      textarea(v-model="data.description")
       span(v-html="data.status")
       span(v-html="data.adminUsers")
       span(v-html="data.currentUsers")
@@ -15,8 +18,13 @@
       span(v-html="data.importance")
       span(v-html="data.parentTaskId")
 
-      button(@click="onSave()")
-        span SAVE
+      .row.ui.pt-4.pb-4.bg-white.border-top
+        .col
+          button.btn.btn-primary.btn-block(@click="onSave()")
+            span Save
+        .col
+          button.btn.btn-secondary.btn-block(@click="")
+            span Cancel
 
 </template>
 
@@ -33,16 +41,19 @@
   })
   export default class TaskPage extends Vue {
     data?: IRecordData;
+    before: IRecordData = this.data!;
 
     mounted() {
     }
 
     getData() {
       let data = taskStore.list[Number.parseInt(this.$route.params.taskID)];
-      if (this.data != data) {
-        this.data = data;
+      if (this.before != data) {
+        this.data = Object.assign({}, data);
+        console.log(this.data, data);
+        this.before = data;
       }
-      return data;
+      return this.data;
     }
 
     getTask() {
@@ -50,13 +61,73 @@
     }
 
     onSave() {
-      GapiMgr.save(this.$route.params.sheetID, "Master");
+      let flag = true;
+      for (let i in this.before) {
+        //@ts-ignore
+        if (this.before[i] != this.data[i]) {
+          flag = false;
+          //@ts-ignore
+          console.log(i, this.before[i], this.data[i]);
+        }
+      }
+      if (!flag) {
+        GapiMgr.getAllData(this.$route.params.sheetID, "Master").then((json: { number: IRecordData }) => {
+          let index = -1;
+          for (let i in json) {
+            //@ts-ignore
+            let item = <IRecordData>json[i];
+            if (item.taskId == this.data!.taskId) {
+
+              index = item.index;
+              break;
+            }
+          }
+          if (index == -1) return new Error("hogeeee");
+
+          let row = [];
+          for (let key in this.data) {
+            if (key == "index") continue;
+            //@ts-ignore
+            row[GapiMgr.keyByIndexOfMaster[key]] = this.data[key];
+          }
+
+          GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
+            this.data!.index = index;
+            //@ts-ignore
+            json[this.data!.taskId] = this.data!;
+            taskStore.add(json);
+            console.log(json);
+          });
+          console.log("hogehoge", index, row);
+        }, (e) => {
+
+        });
+      }
+      // GapiMgr.save(this.$route.params.sheetID, "Master");
     }
   }
 </script>
 
 <style lang="scss">
   .task-page {
-    background-color: $color-green;
+    .container-fluid {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title {
+
+    }
+
+    .description {
+      textarea {
+        height: 100%
+      }
+    }
+
+    .ui {
+      position: sticky;
+      bottom: 0;
+    }
   }
 </style>

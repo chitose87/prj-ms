@@ -1,13 +1,17 @@
 <template lang="pug">
   .dash-board
-    .container
+    .container-fluid
       h3 DashBoard
       h4(v-html="getSheetID()")
 
-      ul
-        li(v-for="item in getTask()")
-          p {{item.title}}
-          RecordComp(:data="item")
+      table.table.table-hover
+        tr
+          th(scope="col") ID
+          th(scope="col").resize-h.overflow-auto title
+          th(scope="col") category
+          th(scope="col") tags
+          th(scope="col") status
+        RecordComp(v-for="item in taskStore.list" :data="item")
 
 </template>
 
@@ -23,12 +27,13 @@
   })
   export default class DashBoardComp extends Vue {
     sheetID: string = "";
+    taskStore = taskStore;
 
     mounted() {
     }
 
     getSheetID() {
-      console.log(this.sheetID,this.$route.params.sheetID)
+      console.log(this.sheetID, this.$route.params.sheetID)
       if (this.sheetID != this.$route.params.sheetID) {
         this.sheetID = this.$route.params.sheetID;
 
@@ -41,11 +46,15 @@
       return this.$route.params.sheetID;
     }
 
-    getTask() {
-      return taskStore.list;
+    getTask(){
+      return taskStore.list
     }
   }
 </script>
 
 <style lang="scss">
+  table {
+    th {
+    }
+  }
 </style>

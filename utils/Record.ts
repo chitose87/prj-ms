@@ -1,4 +1,6 @@
 export interface IRecordData {
+  index:number;
+
   taskId: number;
   projectId: number;
   title: string;

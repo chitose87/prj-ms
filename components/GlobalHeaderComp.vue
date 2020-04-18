@@ -1,30 +1,31 @@
 <template lang="pug">
-  header.gloabl-header
-    .container
-      p Project Name
+  header.gloabl-header.navbar.navbar-expand.d-flex.align-items-center
+    .navbar-brand タスク管理
 
-      div
-        input(type="text",v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
-        nuxt-link(:to="{name:'sheetID',params:{sheetID:sheetID}}") Move
+    .form-inline
+      input.form-control.form-control-sm(type="text",v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
+      nuxt-link.btn.btn-primary.btn-sm(:to="{name:'sheetID',params:{sheetID:sheetID}}") Move
 
-      .user
-        .body(v-if="isLogin()")
-          button(v-on:click="singOut") SingOut
+    .user.ml-auto
+      .body(v-if="isLogin()")
+        span {{userStore.email}}
+        button.btn.btn-sm.btn-secondary(v-on:click="singOut") SingOut
 
-        .body(v-else)
-          button(v-on:click="singIn") SingIn
+      .body(v-else)
+        button.btn.btn-primary.btn-sm(v-on:click="singIn") SingIn
 
 </template>
 
 <script lang="ts">
   import {Component, Vue} from "~/node_modules/nuxt-property-decorator";
-  import {loginStore} from "~/utils/store-accessor";
+  import {loginStore, userStore} from "~/utils/store-accessor";
   import GapiMgr from "~/utils/GapiMgr";
 
   @Component({
     components: {}
   })
   export default class GlobalHeaderComp extends Vue {
+    userStore = userStore;
     sheetID = "";
 
     mounted() {
@@ -47,15 +48,11 @@
 
 <style lang="scss">
   .gloabl-header {
+    position: sticky;
+    top: 0;
+    z-index: $zindex-sticky;
+    background-color: $dark;
+    color: $white;
     height: 3rem;
-    background-color: $color-black;
-    color: $color-white;
-
-    .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 100%;
-    }
   }
 </style>

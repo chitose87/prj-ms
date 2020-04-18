@@ -1,19 +1,19 @@
 <template lang="pug">
-  .record
-    span(v-html="data.taskId")
-    span(v-html="data.projectId")
-    span(v-html="data.category")
-    span(v-html="data.tags")
-    p(v-html="data.title")
-    pre(v-html="data.description")
-    span(v-html="data.status")
-    span(v-html="data.adminUsers")
-    span(v-html="data.currentUsers")
-    span(v-html="data.targetDate")
-    span(v-html="data.deadlineDate")
-    span(v-html="data.importance")
-    span(v-html="data.parentTaskId")
-    nuxt-link(:to="{name:'sheetID-taskID',params:{sheetID:$route.params.sheetID,taskID:data.taskId}}") detail
+  nuxt-link.record(:to="{name:'sheetID-taskID',params:{sheetID:$route.params.sheetID,taskID:data.taskId}}")
+    //span(v-html="data.projectId")
+    th(scope="row",v-html="data.taskId")
+    td.font-weight-bolder(v-html="data.title")
+    td(v-html="data.category")
+    td(v-html="data.tags")
+    //pre(v-html="data.description")
+    td(v-html="data.status")
+    //div
+      span(v-html="data.adminUsers")
+      span(v-html="data.currentUsers")
+      span(v-html="data.targetDate")
+      span(v-html="data.deadlineDate")
+      span(v-html="data.importance")
+    //span(v-html="data.parentTaskId")
 
 </template>
 
@@ -32,5 +32,8 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .record{
+    display: table-row;
+  }
 </style>

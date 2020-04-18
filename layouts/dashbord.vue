@@ -1,20 +1,20 @@
 <template lang="pug">
   div
     GlobalHeaderComp
-    .row
-      .col
+    .d-flex
+      .sidebar.flex-grow-1.flex-shrink-1
         DashBoardComp(v-if="isLogin() && $route.params.sheetID")
-      .col
+      .border-left.flex-grow-1.flex-shrink-1
         nuxt
 </template>
 
 <style lang="scss" scoped>
-  .row {
-    display: flex;
-
-    .col {
-
-    }
+  .sidebar {
+    height: calc(100vh - 3rem);
+    overflow: auto;
+    position: sticky;
+    top: 3rem;
+    resize: horizontal;
   }
 </style>
 

@@ -28,7 +28,8 @@ export default {
   ** Global CSS
   */
   css: [
-    '~/assets/style/common.scss',
+    '@/assets/scss/app.scss'
+    // '~/assets/style/common.scss',
   ],
   /*
   ** Plugins to load before mounting the App
@@ -46,12 +47,14 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    'bootstrap-vue/nuxt',
+    // {css: false},
     '@nuxtjs/style-resources',
     '@nuxtjs/pwa',
   ],
   styleResources: {
     scss: [
-      '~/assets/style/_utils/_index.scss',
+      '~/assets/scss/_variables.scss',
     ]
   },
   /*
