@@ -6,10 +6,10 @@ export interface IRecordData {
   category: string;
   tags: string;
   status: string;
-  admin: string;
-  current: string;
-  target: string;
-  deadline: string;
+  adminUsers: string;
+  currentUsers: string;
+  targetDate: string;
+  deadlineDate: string;
   importance: string;
   parentTaskId: number;
 }

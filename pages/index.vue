@@ -1,10 +1,7 @@
 <template lang="pug">
   .top
-    global-header-comp
     .container
       p hoge
-
-
 
       //-
         onload="this.onload=function(){};handleClientLoad()"
@@ -15,10 +12,9 @@
 <script lang="ts">
   import {Component} from "~/node_modules/vue-property-decorator";
   import {Vue} from "~/node_modules/nuxt-property-decorator";
-  import GlobalHeaderComp from "~/components/GlobalHeaderComp.vue";
 
   @Component({
-    components: {GlobalHeaderComp}
+    components: {}
   })
   export default class TopPageComp extends Vue {
     mounted() {

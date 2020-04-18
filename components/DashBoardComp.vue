@@ -2,9 +2,11 @@
   .dash-board
     .container
       h3 DashBoard
+      h4(v-html="getSheetID()")
 
       ul
-        li(v-for="item in list")
+        li(v-for="item in getTask()")
+          p {{item.title}}
           RecordComp(:data="item")
 
 </template>
@@ -14,30 +16,33 @@
   import GapiMgr from "~/utils/GapiMgr";
   import RecordComp from "~/components/RecordComp.vue";
   import {IRecordData} from "~/utils/Record";
+  import {taskStore} from "~/utils/store-accessor";
 
   @Component({
     components: {RecordComp}
   })
   export default class DashBoardComp extends Vue {
-    list: IRecordData[] = [];
+    sheetID: string = "";
 
     mounted() {
-      GapiMgr.getAllData(this.$route.params.sheetID, "Master").then((json: IRecordData[]) => {
-        this.list = json;
-      }, (e) => {
-        console.log(e);
-      });
+    }
 
-      // gapi.client.sheets.spreadsheets.values.get({
-      //   spreadsheetId: this.$route.params.sheetID,
-      //   range: 'Master!A1:H17',
-      //   // valueRenderOption: '',
-      //   // dateTimeRenderOption: '',
-      // }).then((response) => {
-      //   console.log(response.result);
-      // }, (reason) => {
-      //   console.error('error: ' + reason.result.error.message);
-      // });
+    getSheetID() {
+      console.log(this.sheetID,this.$route.params.sheetID)
+      if (this.sheetID != this.$route.params.sheetID) {
+        this.sheetID = this.$route.params.sheetID;
+
+        GapiMgr.getAllData(this.sheetID, "Master").then((json: { number: IRecordData }) => {
+          taskStore.add(json);
+        }, (e) => {
+          console.log(e);
+        });
+      }
+      return this.$route.params.sheetID;
+    }
+
+    getTask() {
+      return taskStore.list;
     }
   }
 </script>
