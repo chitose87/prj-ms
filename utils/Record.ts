@@ -1,7 +1,7 @@
 export interface IRecordData {
   index:number;
 
-  taskId: number;
+  id: number;
   projectId: number;
   title: string;
   description: string;

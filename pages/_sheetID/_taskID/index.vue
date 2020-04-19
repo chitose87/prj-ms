@@ -6,7 +6,7 @@
       .description.form-group.flex-grow-1
         textarea.form-control(v-model="data.description")
 
-      span(v-html="data.taskId")
+      span(v-html="data.id")
       span(v-html="data.projectId")
       span(v-html="data.category")
       span(v-html="data.tags")
@@ -34,6 +34,7 @@
   import {IRecordData} from "~/utils/Record";
   import {taskStore} from "~/utils/store-accessor";
   import GapiMgr from "~/utils/GapiMgr";
+  import Utils from "~/utils/Utils";
 
   @Component({
     layout: 'dashbord',
@@ -71,39 +72,38 @@
         }
       }
       if (!flag) {
-        GapiMgr.getAllData(this.$route.params.sheetID, "Master").then((json: { number: IRecordData }) => {
-          let index = -1;
-          for (let i in json) {
-            //@ts-ignore
-            let item = <IRecordData>json[i];
-            if (item.taskId == this.data!.taskId) {
+        GapiMgr.batchGet(this.$route.params.sheetID, {
+          range: "Master", callBack: (csv: any[][]) => {
+            let v = Utils.csv2Json(csv);
+            let index = -1;
+            for (let i in v.dic) {
+              //@ts-ignore
+              let item = <IRecordData>v.dic[i];
+              if (item.id == this.data!.id) {
 
-              index = item.index;
-              break;
+                index = item.index;
+                break;
+              }
             }
+            if (index == -1) return new Error("hogeeee");
+
+            let row = [];
+            for (let key in this.data) {
+              if (key == "index") continue;
+              //@ts-ignore
+              row[v.keyByIndex[key]] = this.data[key];
+            }
+
+            GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
+              this.data!.index = index;
+              v.dic[this.data!.id] = this.data!;
+              taskStore.add(v.dic);
+              console.log(v.dic);
+            });
+
           }
-          if (index == -1) return new Error("hogeeee");
-
-          let row = [];
-          for (let key in this.data) {
-            if (key == "index") continue;
-            //@ts-ignore
-            row[GapiMgr.keyByIndexOfMaster[key]] = this.data[key];
-          }
-
-          GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
-            this.data!.index = index;
-            //@ts-ignore
-            json[this.data!.taskId] = this.data!;
-            taskStore.add(json);
-            console.log(json);
-          });
-          console.log("hogehoge", index, row);
-        }, (e) => {
-
         });
       }
-      // GapiMgr.save(this.$route.params.sheetID, "Master");
     }
   }
 </script>

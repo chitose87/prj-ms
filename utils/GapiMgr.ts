@@ -11,47 +11,21 @@ export default class GapiMgr {
     gapi.auth2.getAuthInstance().signOut();
   }
 
-  static getAllData(sheetID: string, ranges: string) {
-    console.log("getAllData", sheetID);
-
-    return new Promise<{ number: IRecordData }>((resolve, reject) => {
-      gapi.client.sheets.spreadsheets.values.batchGet({
-        spreadsheetId: sheetID,
-        ranges: ranges,
-        valueRenderOption: 'UNFORMATTED_VALUE',
-        dateTimeRenderOption: 'SERIAL_NUMBER',
-      }).then((response) => {
-        console.log(response.result);
-        try {
-          let values = response.result.valueRanges![0].values;
-          let json = this.csv2Json(values, this.keyByIndexOfMaster);
-          resolve(json);
-        } catch (e) {
-          reject(e);
-        }
-      }, reject);
-    });
-  }
-
-  private static csv2Json(values: any, keyByIndex: { [keys: string]: number }) {
-    let dic: any = {};
-    let keysRow = values.shift();
-    for (let i in keysRow) {
-      //@ts-ignore
-      keyByIndex[keysRow[i]] = i;
+  static batchGet(sheetID: string, ...rangeReqs: { range: string, callBack: (csv: any[][]) => void }[]) {
+    let ranges = [];
+    for (let req of rangeReqs) {
+      ranges.push(req.range);
     }
-
-    let index = 0;
-    for (let row of values) {
-      index++;
-      if (row[0] == "pass") continue;
-      let item: any = {index: index};
-      for (let i = row.length; i >= 0; --i) {
-        item[keysRow[i]] = row[i];
+    gapi.client.sheets.spreadsheets.values.batchGet({
+      spreadsheetId: sheetID,
+      ranges: ranges,
+      valueRenderOption: 'UNFORMATTED_VALUE',
+      dateTimeRenderOption: 'SERIAL_NUMBER',
+    }).then((response) => {
+      for (let i in response.result.valueRanges!) {
+        rangeReqs[i].callBack(response.result.valueRanges[i].values!);
       }
-      dic[item.taskId] = item;
-    }
-    return dic;
+    });
   }
 
   static updateRow(sheetID: string, ranges: string, row: any[]) {
@@ -76,4 +50,5 @@ export default class GapiMgr {
       }, reject);
     });
   }
+
 }

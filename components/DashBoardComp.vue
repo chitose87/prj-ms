@@ -21,6 +21,7 @@
   import RecordComp from "~/components/RecordComp.vue";
   import {IRecordData} from "~/utils/Record";
   import {taskStore} from "~/utils/store-accessor";
+  import Utils from "~/utils/Utils";
 
   @Component({
     components: {RecordComp}
@@ -37,17 +38,20 @@
       if (this.sheetID != this.$route.params.sheetID) {
         this.sheetID = this.$route.params.sheetID;
 
-        GapiMgr.getAllData(this.sheetID, "Master").then((json: { number: IRecordData }) => {
-          taskStore.add(json);
-        }, (e) => {
-          console.log(e);
+        GapiMgr.batchGet(this.sheetID, {
+          range: "Master", callBack: (csv: any[][]) => {
+            let v = Utils.csv2Json(csv);
+            taskStore.add(v.dic);
+            // console.log("Master", v);
+          }
+        }, {
+          range: "_parameter", callBack: (csv: any[][]) => {
+            let v = Utils.csv2List(csv);
+            console.log("_parameter", v);
+          }
         });
       }
       return this.$route.params.sheetID;
-    }
-
-    getTask(){
-      return taskStore.list
     }
   }
 </script>

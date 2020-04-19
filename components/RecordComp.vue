@@ -1,7 +1,7 @@
 <template lang="pug">
-  nuxt-link.record(:to="{name:'sheetID-taskID',params:{sheetID:$route.params.sheetID,taskID:data.taskId}}")
+  nuxt-link.record(:to="{name:'sheetID-taskID',params:{sheetID:$route.params.sheetID,taskID:data.id}}")
     //span(v-html="data.projectId")
-    th(scope="row",v-html="data.taskId")
+    th(scope="row",v-html="data.id")
     td.font-weight-bolder(v-html="data.title")
     td(v-html="data.category")
     td(v-html="data.tags")
