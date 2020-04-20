@@ -1,5 +1,3 @@
-import {IRecordData} from "~/utils/Record";
-
 export default class GapiMgr {
   static keyByIndexOfMaster: { [keys: string]: number } = {};
 
@@ -20,7 +18,8 @@ export default class GapiMgr {
       spreadsheetId: sheetID,
       ranges: ranges,
       valueRenderOption: 'UNFORMATTED_VALUE',
-      dateTimeRenderOption: 'SERIAL_NUMBER',
+      // dateTimeRenderOption: 'SERIAL_NUMBER',
+      dateTimeRenderOption: 'FORMATTED_STRING',
     }).then((response) => {
       for (let i in response.result.valueRanges!) {
         rangeReqs[i].callBack(response.result.valueRanges[i].values!);

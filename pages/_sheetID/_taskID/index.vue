@@ -1,21 +1,48 @@
 <template lang="pug">
   .task-page.pt-4.pb-4.h-100
     .container-fluid.h-100(v-if="getData()")
-      .title.form-group
+      .form-group.title
         input.form-control.font-weight-bolder(type="text" v-model="data.title")
-      .description.form-group.flex-grow-1
+      .form-group.flex-grow-1.description
         textarea.form-control(v-model="data.description")
 
+
+      .form-row
+        .col.form-group.adminUsers
+          label 管理者
+          select.form-control(v-model="data.adminUsers")
+            option(v-for="item in paramStore.email",:value="item") {{item}}
+
+        .col.form-group.adminUsers
+          label 担当者
+          select.form-control(v-model="data.currentUsers")
+            option(v-for="item in paramStore.email",:value="item") {{item}}
+
+      .form-row
+        .col.form-group.status
+          label ステータス
+          select.form-control(v-model="data.status")
+            option(v-for="item in paramStore.status",:value="item") {{item}}
+
+        .col.form-group.category
+          label カテゴリ
+          select.form-control(v-model="data.category")
+            option(v-for="item in paramStore.category",:value="item") {{item}}
+
+        .col.form-group.importance
+          label 重要度
+          input.form-control(type="number" v-model="data.importance")
+
+      .form-row
+        .col.form-group
+          label 期限日
+          input.form-control(type="date" v-model="data.targetDate")
+        .col.form-group
+          label 最終期限日
+          input.form-control(type="date" v-model="data.deadlineDate")
       span(v-html="data.id")
       span(v-html="data.projectId")
-      span(v-html="data.category")
       span(v-html="data.tags")
-      span(v-html="data.status")
-      span(v-html="data.adminUsers")
-      span(v-html="data.currentUsers")
-      span(v-html="data.targetDate")
-      span(v-html="data.deadlineDate")
-      span(v-html="data.importance")
       span(v-html="data.parentTaskId")
 
       .row.ui.pt-4.pb-4.bg-white.border-top
@@ -32,7 +59,7 @@
   import {Component, Prop} from "~/node_modules/vue-property-decorator";
   import {Vue} from "~/node_modules/nuxt-property-decorator";
   import {IRecordData} from "~/utils/Record";
-  import {taskStore} from "~/utils/store-accessor";
+  import {paramStore, taskStore} from "~/utils/store-accessor";
   import GapiMgr from "~/utils/GapiMgr";
   import Utils from "~/utils/Utils";
 
@@ -41,8 +68,17 @@
     components: {}
   })
   export default class TaskPage extends Vue {
+    // private _targetDate=new Date().getTime();
+    // get targetDate() {
+    //   return this._targetDate;
+    // }
+    //
+    // set targetDate(value) {
+    //   this._targetDate = value;
+    // }
     data?: IRecordData;
     before: IRecordData = this.data!;
+    paramStore = paramStore;
 
     mounted() {
     }
@@ -94,13 +130,13 @@
               row[v.keyByIndex[key]] = this.data[key];
             }
 
+            //save
             GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
-              this.data!.index = index;
-              v.dic[this.data!.id] = this.data!;
-              taskStore.add(v.dic);
-              console.log(v.dic);
             });
-
+            this.data!.index = index;
+            v.dic[this.data!.id] = this.data!;
+            taskStore.add(v.dic);
+            // console.log(v.dic);
           }
         });
       }

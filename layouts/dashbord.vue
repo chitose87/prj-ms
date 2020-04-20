@@ -30,7 +30,7 @@
   })
   export default class DashbordLayout extends Vue {
     isLogin() {
-      return loginStore.status
+      return loginStore.status;
     }
   }
 </script>

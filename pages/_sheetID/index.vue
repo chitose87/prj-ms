@@ -6,7 +6,6 @@
 <script lang="ts">
   import {Component, Prop} from "~/node_modules/vue-property-decorator";
   import {Vue} from "~/node_modules/nuxt-property-decorator";
-  import {loginStore} from "~/utils/store-accessor";
 
   @Component({
     layout: 'dashbord',
@@ -14,7 +13,6 @@
   })
   export default class SheetPage extends Vue {
     mounted() {
-      console.log("mounted", this.$route.params.sheetID);
     }
 
     changeSheet() {

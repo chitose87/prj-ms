@@ -3,10 +3,6 @@
     .container
       p hoge
 
-      //-
-        onload="this.onload=function(){};handleClientLoad()"
-        onreadystatechange="if (this.readyState === 'complete') this.onload()">
-
 </template>
 
 <script lang="ts">

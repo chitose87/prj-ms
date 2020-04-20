@@ -11,6 +11,7 @@
           th(scope="col") category
           th(scope="col") tags
           th(scope="col") status
+          th(scope="col") importance
         RecordComp(v-for="item in taskStore.list" :data="item")
 
 </template>
@@ -19,8 +20,7 @@
   import {Component, Vue} from "~/node_modules/nuxt-property-decorator";
   import GapiMgr from "~/utils/GapiMgr";
   import RecordComp from "~/components/RecordComp.vue";
-  import {IRecordData} from "~/utils/Record";
-  import {taskStore} from "~/utils/store-accessor";
+  import {paramStore, taskStore} from "~/utils/store-accessor";
   import Utils from "~/utils/Utils";
 
   @Component({
@@ -34,7 +34,7 @@
     }
 
     getSheetID() {
-      console.log(this.sheetID, this.$route.params.sheetID)
+      // console.log(this.sheetID, this.$route.params.sheetID)
       if (this.sheetID != this.$route.params.sheetID) {
         this.sheetID = this.$route.params.sheetID;
 
@@ -47,7 +47,8 @@
         }, {
           range: "_parameter", callBack: (csv: any[][]) => {
             let v = Utils.csv2List(csv);
-            console.log("_parameter", v);
+            paramStore.update(v);
+            // console.log("_parameter", v);
           }
         });
       }

@@ -7,12 +7,12 @@
     td(v-html="data.tags")
     //pre(v-html="data.description")
     td(v-html="data.status")
+    td(v-html="data.importance")
     //div
       span(v-html="data.adminUsers")
       span(v-html="data.currentUsers")
       span(v-html="data.targetDate")
       span(v-html="data.deadlineDate")
-      span(v-html="data.importance")
     //span(v-html="data.parentTaskId")
 
 </template>
