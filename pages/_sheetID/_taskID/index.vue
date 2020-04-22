@@ -6,16 +6,15 @@
       .form-group.flex-grow-1.description
         textarea.form-control(v-model="data.description")
 
-
       .form-row
         .col.form-group.adminUsers
           label 管理者
-          select.form-control(v-model="data.adminUsers")
+          select.form-control(v-model="data.adminUsers",multiple)
             option(v-for="item in paramStore.email",:value="item") {{item}}
 
-        .col.form-group.adminUsers
+        .col.form-group.currentUsers
           label 担当者
-          select.form-control(v-model="data.currentUsers")
+          select.form-control(v-model="data.currentUsers",multiple)
             option(v-for="item in paramStore.email",:value="item") {{item}}
 
       .form-row
@@ -53,7 +52,7 @@
           button.btn.btn-secondary.btn-block(@click="")
             span Cancel
 
-</template>
+</template>q
 
 <script lang="ts">
   import {Component, Prop} from "~/node_modules/vue-property-decorator";
@@ -68,17 +67,9 @@
     components: {}
   })
   export default class TaskPage extends Vue {
-    // private _targetDate=new Date().getTime();
-    // get targetDate() {
-    //   return this._targetDate;
-    // }
-    //
-    // set targetDate(value) {
-    //   this._targetDate = value;
-    // }
+    paramStore = paramStore;
     data?: IRecordData;
     before: IRecordData = this.data!;
-    paramStore = paramStore;
 
     mounted() {
     }
@@ -127,7 +118,12 @@
             for (let key in this.data) {
               if (key == "index") continue;
               //@ts-ignore
-              row[v.keyByIndex[key]] = this.data[key];
+              let val = this.data[key];
+              if (typeof val === "object") {
+                row[v.keyByIndex[key]] = JSON.stringify(val);
+              } else {
+                row[v.keyByIndex[key]] = val;
+              }
             }
 
             //save

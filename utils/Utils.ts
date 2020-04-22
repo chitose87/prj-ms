@@ -15,7 +15,9 @@ export default class Utils {
       if (row[0] == "pass") continue;
       let item: any = {index: index};
       for (let i = row.length; i >= 0; --i) {
-        item[keysRow![i]] = row[i];
+        let v = row[i];
+        if (typeof v == "string" && v.indexOf("[") == 0) v = JSON.parse(v);
+        item[keysRow![i]] = v;
       }
       dic[item.id] = item;
     }

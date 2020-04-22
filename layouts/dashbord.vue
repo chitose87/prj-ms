@@ -6,6 +6,17 @@
         DashBoardComp(v-if="isLogin() && $route.params.sheetID")
       .border-left.flex-grow-1.flex-shrink-1
         nuxt
+
+    //table.table.table-borderless
+      tr
+        th(scope="col").resize-h.border-right リスト
+        th(scope="col") 詳細
+      tr
+        td(scope="row").overflow-auto.border-right
+          DashBoardComp(v-if="isLogin() && $route.params.sheetID")
+        td
+          nuxt
+
 </template>
 
 <style lang="scss" scoped>
