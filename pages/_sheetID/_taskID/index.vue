@@ -10,12 +10,12 @@
         .col.form-group.adminUsers
           label 管理者
           select.form-control(v-model="data.adminUsers" multiple)
-            option(v-for="item in paramStore.email" :value="item") {{item}}
+            option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
 
         .col.form-group.currentUsers
           label 担当者
           select.form-control(v-model="data.currentUsers" multiple)
-            option(v-for="item in paramStore.email" :value="item") {{item}}
+            option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
 
       .form-row
         .col.form-group.status
@@ -52,7 +52,7 @@
           button.btn.btn-secondary.btn-block(@click="")
             span Cancel
 
-</template>q
+</template>
 
 <script lang="ts">
   import {Component, Prop} from "~/node_modules/vue-property-decorator";
