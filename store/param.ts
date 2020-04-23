@@ -6,6 +6,7 @@ export default class Param extends VuexModule {
   status: string[] = [];
   email: string[] = [];
   category: string[] = [];
+  tags: string[] = [];
   headerOrder: { name: string, label: string, show: boolean }[] = [
     {name: "id", label: "ID", show: true},
     {name: "title", label: "Title", show: true},
@@ -24,5 +25,6 @@ export default class Param extends VuexModule {
     this.status = param.status;
     this.email = param.email;
     this.category = param.category;
+    this.tags = param.tags;
   }
 }

@@ -1,61 +1,75 @@
 <template lang="pug">
   .dash-board
     .container-fluid
-      //.filter
+      .filter
+        p 絞り込み
+        label.form-check
+          input.form-check-input(type="checkbox")
+          span.form-check-label ON
+        label.form-check
+          input.form-check-input(type="checkbox")
+          span.form-check-label 表示
+
+      .form-group
+        label キーワード
+        input.form-control(type="text")
 
       table.table.table-hover(v-if="getSheetID()")
         tr
-          th(v-for="item in paramStore.headerOrder",scope="col",:class="item.name")
-            div(v-if="item.show &&item.name==='id'")
+          th(v-for="item in paramStore.headerOrder" v-if="item.show" scope="col" :class="item.name")
+            div(v-if="item.name==='id'")
               span {{item.label}}
 
-            div(v-if="item.show &&item.name==='title'")
+            div(v-if="item.name==='title'")
               span {{item.label}}
 
-            div(v-if="item.show &&item.name==='category'")
+            div(v-if="item.name==='category'")
               span {{item.label}}
-              select.form-control(v-model="category",multiple)
+              select.form-control(v-model="filter.val.category" multiple)
                 option(value="") all
-                option(v-for="item in paramStore.category",:value="item") {{item}}
+                option(v-for="item in paramStore.category" :value="item") {{item}}
 
-            div(v-if="item.show &&item.name==='tags'")
+            div(v-if="item.name==='tags'")
               span {{item.label}}
-
-            div(v-if="item.show &&item.name==='status'")
-              span {{item.label}}
-              select.form-control(v-model="status",multiple)
+              select.form-control(v-model="filter.val.tags" multiple)
                 option(value="") all
-                option(v-for="item in paramStore.status",:value="item") {{item}}
+                option(v-for="item in paramStore.tags" :value="item") {{item}}
 
-            div(v-if="item.show &&item.name==='importance'")
+            div(v-if="item.name==='status'")
               span {{item.label}}
-              input.form-control.form-control-sm(type="number",v-model="importance.top")
+              select.form-control(v-model="filter.val.status" multiple)
+                option(value="") all
+                option(v-for="item in paramStore.status" :value="item") {{item}}
+
+            div(v-if="item.name==='importance'")
+              span {{item.label}}
+              input.form-control.form-control-sm(type="number" v-model="filter.val.importance.top")
               hr
-              input.form-control.form-control-sm(type="number",v-model="importance.bottom")
+              input.form-control.form-control-sm(type="number" v-model="filter.val.importance.bottom")
 
-            div(v-if="item.show &&item.name==='adminUsers'")
+            div(v-if="item.name==='adminUsers'")
               span {{item.label}}
-              select.form-control(v-model="adminUsers",multiple)
+              select.form-control(v-model="filter.val.adminUsers" multiple)
                 option(value="") all
-                option(v-for="item in paramStore.email",:value="item",v-html="item.match(/(.*)(?=@)/)[0]")
+                option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
 
-            div(v-if="item.show &&item.name==='currentUsers'")
+            div(v-if="item.name==='currentUsers'")
               span {{item.label}}
-              select.form-control(v-model="currentUsers",multiple)
+              select.form-control(v-model="filter.val.currentUsers" multiple)
                 option(value="") all
-                option(v-for="item in paramStore.email",:value="item",v-html="item.match(/(.*)(?=@)/)[0]")
+                option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
 
-            div(v-if="item.show &&item.name==='targetDate'")
+            div(v-if="item.name==='targetDate'")
               span {{item.label}}
-              input.form-control.form-control-sm(type="date",v-model="targetDate.top")
+              input.form-control.form-control-sm(type="date" v-model="filter.val.targetDate.top")
               hr
-              input.form-control.form-control-sm(type="date",v-model="targetDate.bottom")
+              input.form-control.form-control-sm(type="date" v-model="filter.val.targetDate.bottom")
 
-            div(v-if="item.show &&item.name==='deadlineDate'")
+            div(v-if="item.name==='deadlineDate'")
               span {{item.label}}
-              input.form-control.form-control-sm(type="date",v-model="deadlineDate.top")
+              input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.top")
               hr
-              input.form-control.form-control-sm(type="date",v-model="deadlineDate.bottom")
+              input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.bottom")
 
         RecordComp(v-for="item in taskStore.list" :data="item")
 
@@ -76,9 +90,23 @@
     taskStore = taskStore;
     paramStore = paramStore;
 
+    filter = {
+      val: {
+        status: [],
+        category: [],
+        tags: [],
+        adminUsers: [],
+        currentUsers: [],
+        importance: {top: 0, bottom: 0},
+        targetDate: {top: 0, bottom: 0},
+        deadlineDate: {top: 0, bottom: 0},
+      }
+    };
+
     sheetID: string = "";
     status: string[] = [];
     category: string[] = [];
+    tags: string[] = [];
     adminUsers: string[] = [];
     currentUsers: string[] = [];
     importance = {top: 0, bottom: 0};
@@ -108,6 +136,10 @@
         });
       }
       return this.$route.params.sheetID;
+    }
+
+    onFilter() {
+
     }
   }
 </script>

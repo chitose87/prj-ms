@@ -3,7 +3,7 @@
     .navbar-brand タスク管理
 
     .form-inline
-      input.form-control.form-control-sm(type="text",v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
+      input.form-control.form-control-sm(type="text" v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
       nuxt-link.btn.btn-primary.btn-sm(:to="{name:'sheetID',params:{sheetID:sheetID}}") Move
 
     .user.ml-auto

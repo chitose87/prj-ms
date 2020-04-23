@@ -9,24 +9,24 @@
       .form-row
         .col.form-group.adminUsers
           label 管理者
-          select.form-control(v-model="data.adminUsers",multiple)
-            option(v-for="item in paramStore.email",:value="item") {{item}}
+          select.form-control(v-model="data.adminUsers" multiple)
+            option(v-for="item in paramStore.email" :value="item") {{item}}
 
         .col.form-group.currentUsers
           label 担当者
-          select.form-control(v-model="data.currentUsers",multiple)
-            option(v-for="item in paramStore.email",:value="item") {{item}}
+          select.form-control(v-model="data.currentUsers" multiple)
+            option(v-for="item in paramStore.email" :value="item") {{item}}
 
       .form-row
         .col.form-group.status
           label ステータス
           select.form-control(v-model="data.status")
-            option(v-for="item in paramStore.status",:value="item") {{item}}
+            option(v-for="item in paramStore.status" :value="item") {{item}}
 
         .col.form-group.category
           label カテゴリ
           select.form-control(v-model="data.category")
-            option(v-for="item in paramStore.category",:value="item") {{item}}
+            option(v-for="item in paramStore.category" :value="item") {{item}}
 
         .col.form-group.importance
           label 重要度
