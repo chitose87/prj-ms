@@ -204,10 +204,20 @@
   .nowrap {
     white-space: nowrap;
   }
+  .form-control{
+    padding-left: 0;
+    padding-right: 0;
+  }
 
   table {
+    table-layout: fixed;
+
     th {
     }
+  }
+
+  .id {
+    width: 2.5em;
   }
 
   .title {
@@ -215,11 +225,39 @@
     overflow: auto;
   }
 
+  .category {
+    width: 6em;
+  }
+
+  .tags {
+    width: 6em;
+  }
+
+  .status {
+    width: 6em;
+  }
+
   .importance {
-    width: 50px;
+    width: 5em;
 
     input {
       /*width: 80px;*/
     }
+  }
+
+  .adminUsers {
+    width: 6em;
+  }
+
+  .currentUsers {
+    width: 6em;
+  }
+
+  .targetDate {
+    width: 8em;
+  }
+
+  .deadlineDate {
+    width: 7em;
   }
 </style>
