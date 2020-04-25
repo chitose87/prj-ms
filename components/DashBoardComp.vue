@@ -11,7 +11,11 @@
 
       table.table.table-hover(v-if="getSheetID()")
         tr
-          th(v-for="item in paramStore.headerOrder" v-if="item.show" scope="col" :class="item.name")
+          th(v-for="item in paramStore.headerOrder" scope="col"
+            v-if="item.show"
+            :class="item.name"
+            :style="item.name==='title'?`width:${paramStore.layout.title}px`:''"
+          )
             div(v-if="item.name==='id'")
               span.nowrap {{item.label}}
 
@@ -21,6 +25,7 @@
                 label キーワード
                 input.form-control(type="text" v-model="filter.val.keyword")
                 p.form-text.small.mb-0 ＊タイトルと説明文より
+              NobComp(:layoutKey="'title'",:isVertical="false")
 
             div(v-else-if="item.name==='category'")
               span.nowrap {{item.label}}
@@ -91,9 +96,10 @@
   import {paramStore, taskStore} from "~/utils/store-accessor";
   import Utils from "~/utils/Utils";
   import {IRecordData} from "~/utils/Record";
+  import NobComp from "~/components/utils/NobComp.vue";
 
   @Component({
-    components: {RecordComp}
+    components: {NobComp, RecordComp}
   })
   export default class DashBoardComp extends Vue {
     taskStore = taskStore;
@@ -204,7 +210,8 @@
   .nowrap {
     white-space: nowrap;
   }
-  .form-control{
+
+  .form-control {
     padding-left: 0;
     padding-right: 0;
   }
@@ -221,10 +228,17 @@
   }
 
   .title {
-    resize: horizontal;
-    overflow: auto;
+    /*resize: horizontal;*/
+    /*overflow: auto;*/
     min-width: 10em;
     width: 10em;
+    position: relative;
+
+    .nob {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
   }
 
   .category {

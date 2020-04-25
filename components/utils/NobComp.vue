@@ -83,7 +83,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: $gray-300;
+    color: $gray-200;
     font-size: 32px;
 
     -moz-user-select: none;

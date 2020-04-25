@@ -29,6 +29,7 @@ export default class Param extends VuexModule {
   }
 
   layout: any = {
+    title: 160,
     dashboard: 500,
     taskDescription: 500,
   };
