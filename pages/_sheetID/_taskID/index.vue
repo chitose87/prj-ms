@@ -4,7 +4,7 @@
       .form-group.title
         input.form-control.font-weight-bolder(type="text" v-model="data.title")
       .form-group.flex-grow-1.description
-        textarea.form-control(v-model="data.description")
+        textarea.form-control(v-model="data.description",:style="height")
 
       .form-row
         .col.form-group.adminUsers

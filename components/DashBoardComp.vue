@@ -223,6 +223,7 @@
   .title {
     resize: horizontal;
     overflow: auto;
+    min-width: 10em;
   }
 
   .category {

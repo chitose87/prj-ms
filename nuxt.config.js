@@ -7,7 +7,7 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'Spreadsheet PM UI',
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},
@@ -17,7 +17,13 @@ export default {
       {src: 'https://apis.google.com/js/api.js'}
     ],
     link: [
-      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
+      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+      // {
+      //   rel: 'stylesheet',
+      //   href: 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+      //   integrity: "sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN",
+      //   crossorigin: "anonymous"
+      // }
     ]
   },
   /*
@@ -52,6 +58,12 @@ export default {
     '@nuxtjs/style-resources',
     '@nuxtjs/pwa',
   ],
+  // _override.scssで既に読み込んでいるのでここはfalseにする
+  bootstrapVue: {
+    bootstrapCSS: false, // or `css`
+    bootstrapVueCSS: false // or `bvCSS`
+    ,icons: true
+  },
   styleResources: {
     scss: [
       '~/assets/scss/_variables.scss',
@@ -73,5 +85,8 @@ export default {
       ]
     }
   },
+  // generate: {
+  //   dir: "public"
+  // },
   env: process.env
 }

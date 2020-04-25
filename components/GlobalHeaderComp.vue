@@ -1,6 +1,6 @@
 <template lang="pug">
   header.gloabl-header.navbar.navbar-expand.d-flex.align-items-center
-    .navbar-brand タスク管理
+    .navbar-brand SsPM UI
 
     .form-inline
       input.form-control.form-control-sm(type="text" v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
@@ -9,7 +9,7 @@
     .user.ml-auto
       .body(v-if="isLogin()")
         span {{userStore.email}}
-        button.btn.btn-sm.btn-secondary(v-on:click="singOut") SingOut
+        button.btn.btn-sm.btn-secondary.ml-2(v-on:click="singOut") SingOut
 
       .body(v-else)
         button.btn.btn-primary.btn-sm(v-on:click="singIn") SingIn

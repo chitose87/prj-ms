@@ -24,6 +24,8 @@ export default class GapiMgr {
       for (let i in response.result.valueRanges!) {
         rangeReqs[i].callBack(response.result.valueRanges[i].values!);
       }
+    }, () => {
+      console.log("erroe")
     });
   }
 
