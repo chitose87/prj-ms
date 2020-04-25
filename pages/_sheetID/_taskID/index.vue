@@ -4,7 +4,8 @@
       .form-group.title
         input.form-control.font-weight-bolder(type="text" v-model="data.title")
       .form-group.flex-grow-1.description
-        textarea.form-control(v-model="data.description",:style="height")
+        textarea.form-control(v-model="data.description",:style="`height:${paramStore.layout.taskDescription}px`")
+        NobComp(:layoutKey="'taskDescription'",:isVertical="true")
 
       .form-row
         .col.form-group.adminUsers
@@ -61,10 +62,11 @@
   import {paramStore, taskStore} from "~/utils/store-accessor";
   import GapiMgr from "~/utils/GapiMgr";
   import Utils from "~/utils/Utils";
+  import NobComp from "~/components/utils/NobComp.vue";
 
   @Component({
     layout: 'dashbord',
-    components: {}
+    components: {NobComp}
   })
   export default class TaskPage extends Vue {
     paramStore = paramStore;
@@ -154,6 +156,10 @@
     .description {
       textarea {
         height: 100%
+      }
+      .nob{
+        position: relative;
+        margin-top: -1rem;
       }
     }
 

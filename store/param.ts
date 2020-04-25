@@ -27,4 +27,14 @@ export default class Param extends VuexModule {
     this.category = param.category;
     this.tags = param.tags;
   }
+
+  layout: any = {
+    dashboard: 500,
+    taskDescription: 500,
+  };
+
+  @Mutation
+  updateE(param: { key: string, val: number }) {
+    this.layout[param.key] = param.val;
+  }
 }
