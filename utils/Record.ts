@@ -16,4 +16,6 @@ export interface IRecordData {
   deadlineDate: string;
   importance: string;
   parentTaskId: number;
+
+  log: any;
 }

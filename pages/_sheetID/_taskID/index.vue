@@ -45,13 +45,23 @@
       span(v-html="data.tags")
       span(v-html="data.parentTaskId")
 
-      .row.ui.pt-4.pb-4.bg-white.border-top
-        .col
-          button.btn.btn-primary.btn-block(@click="onSave()")
-            span Save
-        .col
-          button.btn.btn-secondary.btn-block(@click="")
-            span Cancel
+      .log
+        ul
+          li(v-for="item in data.log")
+            span(v-html="item.user")
+            span(v-html="item.timestamp")
+            span(v-html="item.comment")
+
+      .ui.bg-white.border-top.pt-4.pb-4
+        .form-group.flex-grow-1.description
+          textarea.form-control(v-model="comment")
+        .row
+          .col
+            button.btn.btn-primary.btn-block(@click="onSave()")
+              span Save
+          .col
+            button.btn.btn-secondary.btn-block(@click="")
+              span Cancel
 
 </template>
 
@@ -59,7 +69,7 @@
   import {Component, Prop} from "~/node_modules/vue-property-decorator";
   import {Vue} from "~/node_modules/nuxt-property-decorator";
   import {IRecordData} from "~/utils/Record";
-  import {paramStore, taskStore} from "~/utils/store-accessor";
+  import {paramStore, taskStore, userStore} from "~/utils/store-accessor";
   import GapiMgr from "~/utils/GapiMgr";
   import Utils from "~/utils/Utils";
   import NobComp from "~/components/utils/NobComp.vue";
@@ -73,6 +83,8 @@
     data?: IRecordData;
     before: IRecordData = this.data!;
 
+    comment: string = "";
+
     mounted() {
     }
 
@@ -83,7 +95,7 @@
         // console.log(this.data, data);
         this.before = data;
 
-        GapiMgr.getComment(this.$route.params.sheetID,data,(e)=>{
+        GapiMgr.getComment(this.$route.params.sheetID, data, (e) => {
           console.log(e);
         });
       }
@@ -96,6 +108,10 @@
 
     onSave() {
       let flag = true;
+      let newLog: any = {
+        user: userStore.email,
+        timestamp: +new Date(),
+      };
       for (let i in this.before) {
         //@ts-ignore
         if (this.before[i] != this.data[i]) {
@@ -104,7 +120,7 @@
           console.log(i, this.before[i], this.data[i]);
         }
       }
-      if (!flag) {
+      if (!flag || this.comment) {
         GapiMgr.batchGet(this.$route.params.sheetID, {
           range: "Master", callBack: (csv: any[][]) => {
             let v = Utils.csv2Json(csv);
@@ -132,11 +148,19 @@
               }
             }
 
+            if (this.comment) {
+              newLog.comment = this.comment;
+            }
+            let log = v.dic[this.data!.id].log;
+            log.push(newLog);
+            row[v.keyByIndex["log"]] = JSON.stringify(log).replace(/},{/g, "},\r\n{");
+
             //save
             GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
             });
             this.data!.index = index;
             v.dic[this.data!.id] = this.data!;
+            v.dic[this.data!.id].log = log;
             taskStore.add(v.dic);
             // console.log(v.dic);
           }
@@ -161,7 +185,8 @@
       textarea {
         height: 100%
       }
-      .nob{
+
+      .nob {
         position: relative;
         margin-top: -1rem;
       }
