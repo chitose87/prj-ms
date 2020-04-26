@@ -28,14 +28,18 @@ export default class Param extends VuexModule {
     this.tags = param.tags;
   }
 
-  layout: any = {
-    title: 160,
-    dashboard: 500,
-    taskDescription: 500,
-  };
+  layout: any = (() => {
+    let obj = JSON.parse(localStorage.getItem("layout") || "{}");
+    return {
+      title: (obj && obj.title) || 160,
+      dashboard: (obj && obj.dashboard) || 500,
+      taskDescription: (obj && obj.taskDescription) || 500,
+    }
+  })();
 
   @Mutation
   updateE(param: { key: string, val: number }) {
     this.layout[param.key] = param.val;
+    localStorage.setItem("layout", JSON.stringify(this.layout));
   }
 }

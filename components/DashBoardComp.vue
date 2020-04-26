@@ -163,8 +163,6 @@
     }
 
     setFiltered(item: IRecordData) {
-      console.log("setFiltered");
-
       if (this.filter.active) {
         //return false, or pass
         for (let key of ["category", "tags", "status", "adminUsers", "currentUsers"]) {
