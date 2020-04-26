@@ -80,8 +80,12 @@
       let data = taskStore.list[Number.parseInt(this.$route.params.taskID)];
       if (this.before != data) {
         this.data = Object.assign({}, data);
-        console.log(this.data, data);
+        // console.log(this.data, data);
         this.before = data;
+
+        GapiMgr.getComment(this.$route.params.sheetID,data,(e)=>{
+          console.log(e);
+        });
       }
       return this.data;
     }

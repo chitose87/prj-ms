@@ -26,6 +26,7 @@
     "types": [
       "@types/node",
       "@nuxt/types",
+      "gapi.client.drive",
       "gapi.client.sheets",
       "gapi.auth2",
       "gapi"

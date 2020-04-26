@@ -1,3 +1,5 @@
+import {IRecordData} from "~/utils/Record";
+
 export default class GapiMgr {
   static keyByIndexOfMaster: { [keys: string]: number } = {};
 
@@ -52,4 +54,6 @@ export default class GapiMgr {
     });
   }
 
+  static getComment(sheetID: string, data: IRecordData, param2: (e: any) => void) {
+  }
 }

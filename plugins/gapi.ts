@@ -4,8 +4,14 @@ gapi.load('client:auth2', () => {
   gapi.client.init({
     apiKey: process.env.apiKey,
     clientId: process.env.clientId,
-    discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
-    scope: "https://www.googleapis.com/auth/spreadsheets"
+    discoveryDocs: [
+      "https://sheets.googleapis.com/$discovery/rest?version=v4",
+      // "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
+    ],
+    scope: [
+      "https://www.googleapis.com/auth/spreadsheets",
+      // "https://www.googleapis.com/auth/drive"
+    ].join(" ")
   }).then(() => {
     gapi.auth2.getAuthInstance().isSignedIn.listen(changeLogin);
     changeLogin(gapi.auth2.getAuthInstance().isSignedIn.get());
@@ -20,6 +26,6 @@ function changeLogin(flag: boolean) {
   if (flag) {
     let user = gapi.auth2.getAuthInstance().currentUser.get();
     let profile = user.getBasicProfile();
-    userStore.update({name:profile.getName(), email:profile.getEmail()});
+    userStore.update({name: profile.getName(), email: profile.getEmail()});
   }
 }

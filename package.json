@@ -25,6 +25,7 @@
     "@nuxtjs/style-resources": "^1.0.0",
     "@types/gapi": "0.0.39",
     "@types/gapi.auth2": "0.0.51",
+    "@types/gapi.client.drive": "^3.0.4",
     "@types/gapi.client.sheets": "^4.0.4",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
