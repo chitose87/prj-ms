@@ -11,12 +11,12 @@
         .col.form-group.adminUsers
           label 管理者
           select.form-control(v-model="data.adminUsers" multiple)
-            option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
+            option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
 
         .col.form-group.currentUsers
           label 担当者
           select.form-control(v-model="data.currentUsers" multiple)
-            option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
+            option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
 
       .form-row
         .col.form-group.status
@@ -46,11 +46,24 @@
       span(v-html="data.parentTaskId")
 
       .log
-        ul
-          li(v-for="item in data.log")
-            span(v-html="item.user")
-            span(v-html="item.timestamp")
-            span(v-html="item.comment")
+        label ログ
+        table.table.w-100
+
+          tr(v-for="item in data.log" :class="item.user==userStore.email?'me':''")
+            td.user.border-0
+              span(v-html="utils.getEmailName(item.user)")
+            td.data.border-0.w-100
+              //p(v-html="getDateStr(item.timestamp)")
+              .changed(v-if="item.changed")
+                div(v-for="(ele,key) in item.changed")
+                  span.mr-2(v-html="key")
+                  | :
+                  span.ml-2(v-html="ele")
+              .comment(v-if="item.comment")
+                .card
+                  .card-body
+                    span(v-html="item.comment")
+          //span(v-html="item.timestamp")
 
       .ui.bg-white.border-top.pt-4.pb-4
         .form-group.flex-grow-1.description
@@ -79,11 +92,18 @@
     components: {NobComp}
   })
   export default class TaskPage extends Vue {
+    utils = Utils;
     paramStore = paramStore;
+    userStore = userStore;
     data?: IRecordData;
     before: IRecordData = this.data!;
 
     comment: string = "";
+
+    getDateStr(timestamp: number) {
+      let date = new Date(timestamp);
+      return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+    }
 
     mounted() {
     }
@@ -102,22 +122,27 @@
       return this.data;
     }
 
-    getTask() {
-      return taskStore.list;
-    }
 
     onSave() {
       let flag = true;
       let newLog: any = {
         user: userStore.email,
         timestamp: +new Date(),
+        changed: {}
       };
       for (let i in this.before) {
         //@ts-ignore
         if (this.before[i] != this.data[i]) {
           flag = false;
-          //@ts-ignore
-          console.log(i, this.before[i], this.data[i]);
+          if (i == "adminUsers" || i == "currentUsers") {
+            let a: string[] = [], b: string[] = [];
+            this.before[i].forEach((v) => b.push(Utils.getEmailName(v)));
+            this.data![i].forEach((v) => a.push(Utils.getEmailName(v)));
+            newLog.changed[i] = `${b.join(",")} -> ${a.join(",")}`;
+          } else {
+            //@ts-ignore
+            newLog.changed[i] = `${this.before[i]} -> ${this.data[i]}`;
+          }
         }
       }
       if (!flag || this.comment) {
@@ -189,6 +214,41 @@
       .nob {
         position: relative;
         margin-top: -1rem;
+      }
+    }
+
+    .log {
+      .user {
+
+      }
+
+      .data {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        padding-left: 0;
+        padding-right: 1rem;
+      }
+
+      .comment {
+        .card {
+          display: inline-block;
+          text-align: left;
+        }
+      }
+
+      .me {
+        .user {
+          visibility: hidden;
+        }
+
+        .data {
+          padding-left: 2rem;
+          padding-right: 0;
+          text-align: right;
+        }
+
+        .comment {
+        }
       }
     }
 
