@@ -1,7 +1,10 @@
 export interface IRecordData {
   index: number;
+  child: IRecordData[];
+  gen: number;
 
   id: number;
+
   projectId: number;
   title: string;
   description: string;

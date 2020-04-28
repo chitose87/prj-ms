@@ -8,22 +8,6 @@
       .layout__detail
         nuxt
 
-    //.d-flex
-      .dashbord.flex-shrink-0
-        .box
-      .task.border-left.flex-grow-1.flex-shrink-1
-        .box
-
-    //table.table.table-borderless
-      tr
-        th(scope="col").resize-h.border-right リスト
-        th(scope="col") 詳細
-      tr
-        td(scope="row").overflow-auto.border-right
-          DashBoardComp(v-if="isLogin() && $route.params.sheetID")
-        td
-          nuxt
-
 </template>
 
 <style lang="scss" scoped>

@@ -4,15 +4,45 @@ import {IRecordData} from "~/utils/Record";
 @Module({name: 'task', stateFactory: true, namespaced: true})
 
 export default class Task extends VuexModule {
-  task: { [key: number]: IRecordData } = <{ [key: number]: IRecordData }>{};
+  dic: { [key: number]: IRecordData } = <{ [key: number]: IRecordData }>{};
+  task: IRecordData[] = [];
 
   @Mutation
-  add(json: { [key: number]: IRecordData }) {
-    this.task = json;
+  add(json: any) {
+    this.dic = json;
+    //set parent
+    let count=0;
+    for (let i in json) {
+      let item = json[i];
+      if (item.parentTaskId) {
+        let child = json[item.parentTaskId].child || [];
+        child.push(item);
+        json[item.parentTaskId].child = child;
+      }
+    }
+    //craete list
+    let tasks: IRecordData[] = [];
+    for (let i in json) {
+      let item = json[i];
+      if (!item.parentTaskId) {
+        hoge(item, 0);
+      }
+    }
+    console.log(tasks.length)
+    this.task = tasks;
+
+    function hoge(item: IRecordData, gen: number) {
+      gen++;
+      item.gen = gen;
+      tasks.push(item);
+      for (let i in item.child) {
+        hoge(item.child[i], gen);
+      }
+    }
   }
 
-  get list() {
-    return this.task;
-  }
+  // get list() {
+  //   return this.task;
+  // }
 
 }

@@ -1,11 +1,20 @@
 <template lang="pug">
   .task-page.pt-4.h-100
     .container-fluid(v-if="getData()")
+      .form-row
+        p.col-auto
+          | ID:
+          span(v-html="data.id")
+        .col.form-group.parentTaskId.form-inline
+          label 親タスク
+          select.form-control(v-model="data.parentTaskId")
+            option(v-for="item in taskStore.dic" :value="item.id" :disabled="item.id===data.id||item.parentTaskId===data.id") {{item.id+":"+item.title}}
+
       .form-group.title
         input.form-control.font-weight-bolder(type="text" v-model="data.title")
       .form-group.flex-grow-1.description
-        textarea.form-control(v-model="data.description",:style="`height:${paramStore.layout.taskDescription}px`")
-        NobComp(:layoutKey="'taskDescription'",:isVertical="true")
+        textarea.form-control(v-model="data.description" :style="`height:${paramStore.layout.taskDescription}px`")
+        NobComp(:layoutKey="'taskDescription'" :isVertical="true")
 
       .form-row
         .col.form-group.adminUsers
@@ -29,9 +38,14 @@
           select.form-control(v-model="data.category")
             option(v-for="item in paramStore.category" :value="item") {{item}}
 
+        .col.form-group.tags
+          label タグ
+          select.form-control(v-model="data.tags" disabled=true)
+            option(v-for="item in paramStore.tags" :value="item") {{item}}
+
         .col.form-group.importance
           label 重要度
-          input.form-control(type="number" v-model="data.importance")
+          input.form-control(type="number" v-model="data.importance" disabled=true)
 
       .form-row
         .col.form-group
@@ -40,20 +54,17 @@
         .col.form-group
           label 最終期限日
           input.form-control(type="date" v-model="data.deadlineDate")
-      span(v-html="data.id")
-      span(v-html="data.projectId")
-      span(v-html="data.tags")
-      span(v-html="data.parentTaskId")
+
 
       .log
         LogComp(:data="data.log")
 
       .ui.bg-white.border-top.pt-4.pb-4
         .form-group.flex-grow-1.description
-          textarea.form-control(v-model="comment",:disabled="isSaving")
+          textarea.form-control(v-model="comment" :disabled="isSaving")
         .row
           .col
-            button.btn.btn-primary.btn-block(@click="onSave()",:disabled="isSaving")
+            button.btn.btn-primary.btn-block(@click="onSave()" :disabled="isSaving")
               span Save
           //.col
             button.btn.btn-secondary.btn-block(@click="",:disabled="isSaving")
@@ -79,6 +90,7 @@
     utils = Utils;
     paramStore = paramStore;
     userStore = userStore;
+    taskStore = taskStore;
     data?: IRecordData;
     before: IRecordData = this.data!;
     isSaving = false;
@@ -89,7 +101,7 @@
     }
 
     getData() {
-      let data = taskStore.list[Number.parseInt(this.$route.params.taskID)];
+      let data = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
       if (this.before != data) {
         this.data = Object.assign({}, data);
         // console.log(this.data, data);
@@ -144,6 +156,11 @@
             let row = [];
             for (let key in this.data) {
               if (key == "index") continue;
+              if (key == "gen") continue;
+              if (key == "child") {
+                delete this.data.child;
+                continue;
+              }
               //@ts-ignore
               let val = this.data[key];
               if (typeof val === "object") {

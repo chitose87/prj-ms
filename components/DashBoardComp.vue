@@ -83,9 +83,9 @@
                 input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.top")
                 hr
                 input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.bottom")
-      tbody
 
-        RecordComp(v-for="item in taskStore.list" :data="item" v-show="setFiltered(item)")
+      tbody
+        RecordComp(v-for="item in taskStore.task" :data="item" v-show="setFiltered(item)")
 
 
 </template>
