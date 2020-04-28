@@ -1,17 +1,17 @@
 <template lang="pug">
   .dash-board
-    .container-fluid
-      .filter
-        label.form-check
-          input.form-check-input(type="checkbox" v-model="filter.active")
-          span.form-check-label 絞り込み
-        //label.form-check
-          input.form-check-input(type="checkbox" v-model="filter.active")
-          span.form-check-label 表示
+    .filter
+      label.form-check
+        input.form-check-input(type="checkbox" v-model="filter.active")
+        span.form-check-label 絞り込み
+      //label.form-check
+        input.form-check-input(type="checkbox" v-model="filter.active")
+        span.form-check-label 表示
 
-      table.table.table-hover(v-if="getSheetID()")
+    table.table.table-hover(v-if="getSheetID()")
+      thead
         tr
-          th(v-for="item in paramStore.headerOrder" scope="col"
+          th.bg-primary.text-white.border-0(v-for="item in paramStore.headerOrder" scope="col"
             v-if="item.show"
             :class="item.name"
             :style="item.name==='title'?`width:${paramStore.layout.title}px`:''"
@@ -83,6 +83,7 @@
                 input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.top")
                 hr
                 input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.bottom")
+      tbody
 
         RecordComp(v-for="item in taskStore.list" :data="item" v-show="setFiltered(item)")
 
@@ -205,6 +206,12 @@
 </script>
 
 <style lang="scss" scoped>
+  .dash-board {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+  }
+
   .nowrap {
     white-space: nowrap;
   }
@@ -216,6 +223,18 @@
 
   table {
     table-layout: fixed;
+
+    thead {
+      tr th {
+        position: sticky;
+        top: 0;
+        z-index: $zindex-sticky+1;
+        vertical-align: top;
+      }
+    }
+
+    tbody {
+    }
 
     th {
     }
@@ -230,12 +249,14 @@
     /*overflow: auto;*/
     min-width: 10em;
     width: 10em;
-    position: relative;
+    position: sticky;
+    left: 0;
+    z-index: $zindex-sticky+2;
 
     .nob {
       position: absolute;
       top: 0;
-      right: 0;
+      right: -0.5rem;
     }
   }
 

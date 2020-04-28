@@ -1,14 +1,18 @@
 <template lang="pug">
   div
     GlobalHeaderComp
-    .d-flex
-      .dashbord.flex-shrink-0(:style="`width:${paramStore.layout.dashboard}px`")
+    .layout
+      .layout__dashboard(:style="`width:${paramStore.layout.dashboard}px`")
         NobComp(:layoutKey="'dashboard'",:isVertical="false")
-
-        .box
-          DashBoardComp(v-if="isLogin() && $route.params.sheetID")
-      .task.border-left.flex-grow-1.flex-shrink-1
+        DashBoardComp(v-if="isLogin() && $route.params.sheetID")
+      .layout__detail
         nuxt
+
+    //.d-flex
+      .dashbord.flex-shrink-0
+        .box
+      .task.border-left.flex-grow-1.flex-shrink-1
+        .box
 
     //table.table.table-borderless
       tr
@@ -23,29 +27,32 @@
 </template>
 
 <style lang="scss" scoped>
-  .dashbord {
-    height: calc(100vh - 3rem);
-    position: sticky;
-    top: 3rem;
-    min-width: 20vw;
-    max-width: 100vw;
-
-    .nob {
-      position: absolute;
-      top: 0;
-      right: -1rem;
-      z-index: 1;
-    }
-
-    .box {
-      overflow: auto;
+  .layout {
+    @include mediaquery-not-sm {
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 3rem);
+      display: flex;
+      overflow: hidden;
     }
-  }
+    &__dashboard {
+      flex-shrink: 0;
+      position: relative;
+      min-width: 20vw;
+      max-width: 100vw;
 
-  .task {
+      .nob {
+        position: absolute;
+        top: 0;
+        right: -1rem;
+        z-index: 1;
+      }
+    }
 
+    &__detail {
+      flex-grow: 1;
+      flex-shrink: 1;
+      overflow: hidden;
+    }
   }
 </style>
 

@@ -1,6 +1,6 @@
 <template lang="pug">
-  .task-page.pt-4.pb-4.h-100
-    .container-fluid.h-100(v-if="getData()")
+  .task-page.pt-4.h-100
+    .container-fluid(v-if="getData()")
       .form-group.title
         input.form-control.font-weight-bolder(type="text" v-model="data.title")
       .form-group.flex-grow-1.description
@@ -46,34 +46,17 @@
       span(v-html="data.parentTaskId")
 
       .log
-        label ログ
-        table.table.w-100
-
-          tr(v-for="item in data.log" :class="item.user==userStore.email?'me':''")
-            td.user.border-0
-              span(v-html="utils.getEmailName(item.user)")
-            td.data.border-0.w-100
-              //p(v-html="getDateStr(item.timestamp)")
-              .changed(v-if="item.changed")
-                div(v-for="(ele,key) in item.changed")
-                  span.mr-2(v-html="key")
-                  | :
-                  span.ml-2(v-html="ele")
-              .comment(v-if="item.comment")
-                .card
-                  .card-body
-                    span(v-html="item.comment")
-          //span(v-html="item.timestamp")
+        LogComp(:data="data.log")
 
       .ui.bg-white.border-top.pt-4.pb-4
         .form-group.flex-grow-1.description
-          textarea.form-control(v-model="comment")
+          textarea.form-control(v-model="comment",:disabled="isSaving")
         .row
           .col
-            button.btn.btn-primary.btn-block(@click="onSave()")
+            button.btn.btn-primary.btn-block(@click="onSave()",:disabled="isSaving")
               span Save
-          .col
-            button.btn.btn-secondary.btn-block(@click="")
+          //.col
+            button.btn.btn-secondary.btn-block(@click="",:disabled="isSaving")
               span Cancel
 
 </template>
@@ -86,10 +69,11 @@
   import GapiMgr from "~/utils/GapiMgr";
   import Utils from "~/utils/Utils";
   import NobComp from "~/components/utils/NobComp.vue";
+  import LogComp from "~/components/LogComp.vue";
 
   @Component({
     layout: 'dashbord',
-    components: {NobComp}
+    components: {LogComp, NobComp}
   })
   export default class TaskPage extends Vue {
     utils = Utils;
@@ -97,13 +81,9 @@
     userStore = userStore;
     data?: IRecordData;
     before: IRecordData = this.data!;
+    isSaving = false;
 
     comment: string = "";
-
-    getDateStr(timestamp: number) {
-      let date = new Date(timestamp);
-      return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
-    }
 
     mounted() {
     }
@@ -122,17 +102,16 @@
       return this.data;
     }
 
-
     onSave() {
       let flag = true;
       let newLog: any = {
         user: userStore.email,
         timestamp: +new Date(),
-        changed: {}
       };
       for (let i in this.before) {
         //@ts-ignore
         if (this.before[i] != this.data[i]) {
+          if (flag) newLog.changed = {};
           flag = false;
           if (i == "adminUsers" || i == "currentUsers") {
             let a: string[] = [], b: string[] = [];
@@ -146,6 +125,7 @@
         }
       }
       if (!flag || this.comment) {
+        this.isSaving = true;
         GapiMgr.batchGet(this.$route.params.sheetID, {
           range: "Master", callBack: (csv: any[][]) => {
             let v = Utils.csv2Json(csv);
@@ -159,7 +139,7 @@
                 break;
               }
             }
-            if (index == -1) return new Error("hogeeee");
+            if (index == -1) return new Error("IDが見つからない");
 
             let row = [];
             for (let key in this.data) {
@@ -177,19 +157,22 @@
               newLog.comment = this.comment;
             }
             let log = v.dic[this.data!.id].log;
-            log.push(newLog);
+            log.unshift(newLog);
             row[v.keyByIndex["log"]] = JSON.stringify(log).replace(/},{/g, "},\r\n{");
 
             //save
             GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
+              this.isSaving = false;
+              this.comment = "";
             });
             this.data!.index = index;
             v.dic[this.data!.id] = this.data!;
             v.dic[this.data!.id].log = log;
             taskStore.add(v.dic);
-            // console.log(v.dic);
           }
         });
+      } else {
+        alert("変更箇所が見つかりません");
       }
     }
   }
@@ -197,6 +180,11 @@
 
 <style lang="scss">
   .task-page {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+
     .container-fluid {
       display: flex;
       flex-direction: column;
@@ -214,41 +202,6 @@
       .nob {
         position: relative;
         margin-top: -1rem;
-      }
-    }
-
-    .log {
-      .user {
-
-      }
-
-      .data {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-        padding-left: 0;
-        padding-right: 1rem;
-      }
-
-      .comment {
-        .card {
-          display: inline-block;
-          text-align: left;
-        }
-      }
-
-      .me {
-        .user {
-          visibility: hidden;
-        }
-
-        .data {
-          padding-left: 2rem;
-          padding-right: 0;
-          text-align: right;
-        }
-
-        .comment {
-        }
       }
     }
 

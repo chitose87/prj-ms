@@ -107,7 +107,7 @@
     }
 
     &:hover{
-      background-color: $gray-100;
+      background-color: rgba($black,0.05);
       color: $white;
     }
   }

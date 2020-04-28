@@ -2,7 +2,7 @@
   nuxt-link.record(:to="{name:'sheetID-taskID',params:{sheetID:$route.params.sheetID,taskID:data.id}}")
     td(v-for="item in paramStore.headerOrder" v-if="item.show",scope="col" :class="item.name")
       span(v-if="item.name==='id'" v-html="data.id",scope="row")
-      p(v-if="item.name==='title'" v-html="data.title").font-weight-bolder
+      span(v-if="item.name==='title'" v-html="data.title").font-weight-bolder
       div(v-if="item.name==='category'" v-html="data.category")
       div(v-if="item.name==='tags'" v-html="data.tags")
       div(v-if="item.name==='status'" v-html="data.status")
@@ -47,5 +47,21 @@
 <style lang="scss" scoped>
   .record {
     display: table-row;
+    .title{
+      position: sticky;
+      left: 0;
+      background-color: $white;
+      z-index: $zindex-sticky;
+      &:after{
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #dee2e6;
+        width: 1px;
+        height: 100%;
+      }
+    }
   }
 </style>
