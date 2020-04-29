@@ -10,16 +10,20 @@ export default class Task extends VuexModule {
   @Mutation
   add(json: any) {
     this.dic = json;
-    //set parent
-    let count=0;
     for (let i in json) {
-      let item = json[i];
+      let item: IRecordData = json[i];
+      if (!item.adminUsers) item.adminUsers = [];
+      if (!item.currentUsers) item.currentUsers = [];
+      if (!item.log) item.log = [];
+      if (!item.viewed) item.viewed = {};
+      //set parent
       if (item.parentTaskId) {
         let child = json[item.parentTaskId].child || [];
         child.push(item);
         json[item.parentTaskId].child = child;
       }
     }
+
     //craete list
     let tasks: IRecordData[] = [];
     for (let i in json) {

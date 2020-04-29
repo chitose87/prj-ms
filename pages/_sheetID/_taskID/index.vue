@@ -110,7 +110,17 @@
         GapiMgr.getComment(this.$route.params.sheetID, data, (e) => {
           console.log(e);
         });
+
+        //
+        // let id = this.data!.id;
+        // setTimeout(() => {
+        //   console.log(id, this.data!.id);
+        //   if (id == this.data!.id) {
+        //   } else {
+        //   }
+        // }, 1000 * 10);
       }
+
       return this.data;
     }
 
@@ -126,9 +136,29 @@
           if (flag) newLog.changed = {};
           flag = false;
           if (i == "adminUsers" || i == "currentUsers") {
+            let before = this.before[i] || [];
+            let after = this.data![i] || [];
+
             let a: string[] = [], b: string[] = [];
-            this.before[i].forEach((v) => b.push(Utils.getEmailName(v)));
-            this.data![i].forEach((v) => a.push(Utils.getEmailName(v)));
+            before.forEach((email: string) => {
+              if (after.indexOf(email) == -1) {
+                //なくなったもの
+                b.push(Utils.getEmailName(email));
+              } else {
+                //変わらないもの
+              }
+            });
+            after.forEach((email: string) => {
+              if (before.indexOf(email) == -1) {
+                //増えたもの
+                a.push(Utils.getEmailName(email));
+              } else {
+                //変わらないもの
+              }
+            });
+
+            // if (this.before[i]) this.before[i].forEach((v) => b.push(Utils.getEmailName(v)));
+            // if (this.data![i]) this.data![i].forEach((v) => a.push(Utils.getEmailName(v)));
             newLog.changed[i] = `${b.join(",")} -> ${a.join(",")}`;
           } else {
             //@ts-ignore
@@ -161,6 +191,7 @@
                 delete this.data.child;
                 continue;
               }
+              if (!v.keyByIndex[key]) continue;
               //@ts-ignore
               let val = this.data[key];
               if (typeof val === "object") {

@@ -12,12 +12,12 @@
 
 <style lang="scss" scoped>
   .layout {
-    @include mediaquery-not-sm {
+    //@include mediaquery-not-sm {
       width: 100%;
       height: calc(100vh - 3rem);
       display: flex;
       overflow: hidden;
-    }
+    //}
     &__dashboard {
       flex-shrink: 0;
       position: relative;

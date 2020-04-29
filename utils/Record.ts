@@ -14,6 +14,7 @@ export interface IRecordData {
 
   adminUsers: string[];
   currentUsers: string[];
+  viewed: any;
 
   targetDate: string;
   deadlineDate: string;
