@@ -60,14 +60,14 @@
               span.nowrap {{item.label}}
               select.form-control(v-if="filter.active" v-model="filter.val.adminUsers" multiple @change="filterChange(filter.val,'adminUsers')")
                 option(value="_clear") [ x ]
-                option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
+                option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
                 option(value="") [ 空 ]
 
             div(v-else-if="item.name==='currentUsers'")
               span.nowrap {{item.label}}
               select.form-control(v-if="filter.active" v-model="filter.val.currentUsers" multiple @change="filterChange(filter.val,'currentUsers')")
                 option(value="_clear") [ x ]
-                option(v-for="item in paramStore.email" :value="item" v-html="item.match(/(.*)(?=@)/)[0]")
+                option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
                 option(value="") [ 空 ]
 
             div(v-else-if="item.name==='targetDate'")
@@ -103,6 +103,7 @@
     components: {NobComp, RecordComp}
   })
   export default class DashBoardComp extends Vue {
+    utils = Utils;
     taskStore = taskStore;
     paramStore = paramStore;
 

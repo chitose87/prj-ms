@@ -45,7 +45,8 @@ export default class Utils {
     return dic;
   }
 
-  static getEmailName(email:string){
-    return email.match(/(.*)(?=@)/)![0];
+  static getEmailName(email: string) {
+    let r = email.match(/(.*)(?=@)/);
+    return r && r![0] || email;
   }
 }
