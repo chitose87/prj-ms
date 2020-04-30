@@ -5,6 +5,7 @@
       .layout__dashboard(:style="`width:${paramStore.layout.dashboard}px`")
         NobComp(:layoutKey="'dashboard'",:isVertical="false")
         DashBoardComp(v-if="isLogin() && $route.params.sheetID")
+        InviteLoginComp(v-else)
       .layout__detail
         nuxt
 
@@ -47,9 +48,10 @@
   import DashBoardComp from "~/components/DashBoardComp.vue";
   import {loginStore, paramStore} from "~/utils/store-accessor";
   import NobComp from "~/components/utils/NobComp.vue";
+  import InviteLoginComp from "~/components/InviteLoginComp.vue";
 
   @Component({
-    components: {NobComp, DashBoardComp, GlobalHeaderComp}
+    components: {InviteLoginComp, NobComp, DashBoardComp, GlobalHeaderComp}
   })
   export default class DashbordLayout extends Vue {
     paramStore = paramStore;

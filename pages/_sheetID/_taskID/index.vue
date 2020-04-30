@@ -8,24 +8,31 @@
         .col.form-group.parentTaskId.form-inline
           label 親タスク
           select.form-control(v-model="data.parentTaskId")
-            option(v-for="item in taskStore.dic" :value="item.id" :disabled="item.id===data.id||item.parentTaskId===data.id") {{item.id+":"+item.title}}
+            option(v-for="item in taskStore.dic"
+              :value="item.id"
+              :disabled="item.id===data.id||item.parentTaskId===data.id")
+              | {{item.id+":"+item.title}}
 
       .form-group.title
         input.form-control.font-weight-bolder(type="text" v-model="data.title")
       .form-group.flex-grow-1.description
-        textarea.form-control(v-model="data.description" :style="`height:${paramStore.layout.taskDescription}px`")
+        textarea.form-control(v-model="data.description"
+          :style="`height:${paramStore.layout.taskDescription}px`")
         NobComp(:layoutKey="'taskDescription'" :isVertical="true")
 
       .form-row
-        .col.form-group.adminUsers
+        .col.form-group.adminUsers.mb-0
           label 管理者
-          select.form-control(v-model="data.adminUsers" multiple)
+          select.form-control(v-model="data.adminUsers" multiple
+          :style="`height:${paramStore.layout.taskUser}px`")
             option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
 
-        .col.form-group.currentUsers
+        .col.form-group.currentUsers.mb-0
           label 担当者
-          select.form-control(v-model="data.currentUsers" multiple)
+          select.form-control(v-model="data.currentUsers" multiple
+          :style="`height:${paramStore.layout.taskUser}px`")
             option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
+        NobComp(:layoutKey="'taskUser'" :isVertical="true")
 
       .form-row
         .col.form-group.status

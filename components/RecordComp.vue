@@ -22,6 +22,7 @@
   import {Component, Prop, Vue} from "~/node_modules/nuxt-property-decorator";
   import {IRecordData} from "~/utils/Record";
   import {paramStore} from "~/utils/store-accessor";
+  import Utils from "~/utils/Utils";
 
   @Component({
     components: {}
@@ -38,8 +39,8 @@
 
       let arr = [];
       for (let user of users) {
-        let reg = user.match(/(.*)(?=@)/);
-        if (reg) arr.push(reg[0]);
+        if (!user) continue;
+        arr.push(Utils.getEmailName(user));
       }
       return arr.join(",");
     }

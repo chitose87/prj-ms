@@ -3,6 +3,8 @@
     .container
       h2 初めてログインする方法
 
+      p 正式に申請したアプリケーションではないので下記のような警告が出ますが問題ないです。
+
       ul.list-group.list-group-flush
         li.list-group-item.pb-6
           h3 ①SpreadsheetにアクセスできるGoogleアカウントを選択

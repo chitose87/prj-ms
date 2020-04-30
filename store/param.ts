@@ -34,6 +34,7 @@ export default class Param extends VuexModule {
       title: (obj && obj.title) || 160,
       dashboard: (obj && obj.dashboard) || 500,
       taskDescription: (obj && obj.taskDescription) || 500,
+      taskUser: (obj && obj.taskUser) || 100,
     }
   })();
 

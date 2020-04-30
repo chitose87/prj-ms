@@ -136,7 +136,6 @@
     }
 
     getSheetID() {
-      // console.log(this.sheetID, this.$route.params.sheetID)
       if (this.sheetID != this.$route.params.sheetID) {
         this.sheetID = this.$route.params.sheetID;
 
