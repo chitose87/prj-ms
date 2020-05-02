@@ -13,8 +13,12 @@
               :disabled="item.id===dataClone.id||item.parentTaskId===dataClone.id")
               | {{item.id+":"+item.title}}
 
-      .form-group.title
+      .form-group.title.text-right
         input.form-control.font-weight-bolder(type="text" v-model="dataClone.title")
+        nuxt-link.btn.btn-link.mb-n3(v-if="!isNew" :to="`./new?parentTaskId=${dataClone.id}`")
+          b-icon.mr-1(icon="arrow-return-right")
+          span.mr-1 子タスクを作成
+          b-icon(icon="plus-circle-fill")
       .form-group.flex-grow-1.description
         textarea.form-control(v-model="dataClone.description"
           :style="`height:${paramStore.layout.taskDescription}px`")
@@ -142,6 +146,7 @@
         } else {
           data = {
             id: paramStore.nextId,
+            parentTaskId: this.$route.query.parentTaskId || "",
             title: "新規タスク タイトル",
             adminUsers: [],
             currentUsers: [],
