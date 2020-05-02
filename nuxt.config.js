@@ -56,7 +56,7 @@ export default {
     'bootstrap-vue/nuxt',
     // {css: false},
     '@nuxtjs/style-resources',
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
   ],
   // _override.scssで既に読み込んでいるのでここはfalseにする
   bootstrapVue: {

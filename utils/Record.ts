@@ -21,5 +21,5 @@ export interface IRecordData {
   importance: string;
   parentTaskId: number;
 
-  log: any;
+  log: any[];
 }

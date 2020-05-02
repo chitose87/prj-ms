@@ -26,7 +26,7 @@ export default class GapiMgr {
       for (let i in response.result.valueRanges!) {
         rangeReqs[i].callBack(response.result.valueRanges[i].values!);
       }
-    }, (e:Error) => {
+    }, (e: Error) => {
       console.log(e);
     });
   }
@@ -54,6 +54,27 @@ export default class GapiMgr {
     });
   }
 
-  static getComment(sheetID: string, data: IRecordData, param2: (e: any) => void) {
+  static  insertRow(sheetID: string, ranges: string, row: any[], callBack: any) {
+    console.log("insertRow", row);
+    gapi.client.sheets.spreadsheets.values.append({
+      spreadsheetId: sheetID,
+      range: ranges,
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      //@ts-ignore
+      resource: {
+        values: [
+          row
+        ]
+      }
+    }, {}).then((response: any) => {
+      console.log(response)
+      callBack();
+      // for (let i in response.result.valueRanges!) {
+      //   rangeReqs[i].callBack(response.result.valueRanges[i].values!);
+      // }
+    }, (e: Error) => {
+      console.log(e);
+    });
   }
 }

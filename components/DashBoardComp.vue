@@ -1,14 +1,13 @@
 <template lang="pug">
   .dash-board
+    nuxt-link.btn.btn-link.add-task(to="new")
+      b-icon(icon="plus-circle-fill" @click="")
     .filter
       label.form-check
         input.form-check-input(type="checkbox" v-model="filter.active")
         span.form-check-label 絞り込み
-      //label.form-check
-        input.form-check-input(type="checkbox" v-model="filter.active")
-        span.form-check-label 表示
 
-    table.table.table-hover(v-if="getSheetID()")
+    table.table(v-if="getSheetID()")
       thead
         tr
           th.bg-primary.text-white.border-0(v-for="item in paramStore.headerOrder" scope="col"
@@ -85,7 +84,9 @@
                 input.form-control.form-control-sm(type="date" v-model="filter.val.deadlineDate.bottom")
 
       tbody
-        RecordComp(v-for="item in taskStore.task" :data="item" v-show="setFiltered(item)")
+        RecordComp(v-for="item in taskStore.task"
+          :data="item"
+          v-show="setFiltered(item)")
 
 
 </template>
@@ -143,7 +144,7 @@
         GapiMgr.batchGet(this.sheetID, {
           range: "Master", callBack: (csv: any[][]) => {
             let v = Utils.csv2Json(csv);
-            taskStore.add(v.dic);
+            taskStore.add(v);
             // console.log("Master", v);
           }
         }, {
@@ -210,6 +211,16 @@
     width: 100%;
     height: 100%;
     overflow: scroll;
+
+    .add-task {
+      position: fixed;
+      left: 1rem;
+      bottom: 1rem;
+      padding: 0.5rem;
+      font-size: 36px;
+      z-index: $zindex-fixed;
+      text-shadow: $box-shadow-lg;
+    }
   }
 
   .nowrap {

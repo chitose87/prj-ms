@@ -3,6 +3,8 @@ import {Module, VuexModule, Mutation} from 'vuex-module-decorators'
 @Module({name: 'param', stateFactory: true, namespaced: true})
 
 export default class Param extends VuexModule {
+  nextId: number = 0;
+  keyByIndex: { [keys: string]: number } = {};
   status: string[] = [];
   email: string[] = [];
   category: string[] = [];
@@ -22,6 +24,12 @@ export default class Param extends VuexModule {
 
   @Mutation
   update(param: any) {
+    this.nextId = param.nextId[0];
+
+    for (let i in param.keys) {
+      //@ts-ignore
+      this.keyByIndex[param.keys[i]] = i;
+    }
     this.status = param.status;
     this.email = param.email;
     this.category = param.category;

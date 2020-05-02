@@ -4,32 +4,32 @@
       .form-row
         p.col-auto
           | ID:
-          span(v-html="data.id")
+          span(v-html="dataClone.id")
         .col.form-group.parentTaskId.form-inline
           label 親タスク
-          select.form-control(v-model="data.parentTaskId")
+          select.form-control(v-model="dataClone.parentTaskId")
             option(v-for="item in taskStore.dic"
               :value="item.id"
-              :disabled="item.id===data.id||item.parentTaskId===data.id")
+              :disabled="item.id===dataClone.id||item.parentTaskId===dataClone.id")
               | {{item.id+":"+item.title}}
 
       .form-group.title
-        input.form-control.font-weight-bolder(type="text" v-model="data.title")
+        input.form-control.font-weight-bolder(type="text" v-model="dataClone.title")
       .form-group.flex-grow-1.description
-        textarea.form-control(v-model="data.description"
+        textarea.form-control(v-model="dataClone.description"
           :style="`height:${paramStore.layout.taskDescription}px`")
         NobComp(:layoutKey="'taskDescription'" :isVertical="true")
 
       .form-row
         .col.form-group.adminUsers.mb-0
           label 管理者
-          select.form-control(v-model="data.adminUsers" multiple
+          select.form-control(v-model="dataClone.adminUsers" multiple
           :style="`height:${paramStore.layout.taskUser}px`")
             option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
 
         .col.form-group.currentUsers.mb-0
           label 担当者
-          select.form-control(v-model="data.currentUsers" multiple
+          select.form-control(v-model="dataClone.currentUsers" multiple
           :style="`height:${paramStore.layout.taskUser}px`")
             option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
         NobComp(:layoutKey="'taskUser'" :isVertical="true")
@@ -37,34 +37,39 @@
       .form-row
         .col.form-group.status
           label ステータス
-          select.form-control(v-model="data.status")
+          select.form-control(v-model="dataClone.status")
             option(v-for="item in paramStore.status" :value="item") {{item}}
 
         .col.form-group.category
           label カテゴリ
-          select.form-control(v-model="data.category")
+          select.form-control(v-model="dataClone.category")
             option(v-for="item in paramStore.category" :value="item") {{item}}
 
         .col.form-group.tags
           label タグ
-          select.form-control(v-model="data.tags" disabled=true)
+          select.form-control(v-model="dataClone.tags" disabled=true)
             option(v-for="item in paramStore.tags" :value="item") {{item}}
 
         .col.form-group.importance
           label 重要度
-          input.form-control(type="number" v-model="data.importance" disabled=true)
+          input.form-control(type="number" v-model="dataClone.importance" disabled=true)
 
       .form-row
         .col.form-group
           label 期限日
-          input.form-control(type="date" v-model="data.targetDate")
+          input.form-control(type="date" v-model="dataClone.targetDate")
         .col.form-group
           label 最終期限日
-          input.form-control(type="date" v-model="data.deadlineDate")
+          input.form-control(type="date" v-model="dataClone.deadlineDate")
 
+      //brother
+      //.brother
+
+      //
+      //.children
 
       .log
-        LogComp(:data="data.log")
+        LogComp(:data="dataClone.log")
 
       .ui.bg-white.border-top.pt-4.pb-4
         .form-group.flex-grow-1.description
@@ -72,7 +77,21 @@
         .row
           .col
             button.btn.btn-primary.btn-block(@click="onSave()" :disabled="isSaving")
-              span Save
+              b-icon.mr-2(icon="file-check")
+              span(v-if="isNew") 保存
+              span(v-else) 更新
+          .col
+            button.btn.btn-secondary.btn-block(@click="onSaveAndAdd()" :disabled="isSaving")
+              b-icon.mr-1(icon="file-check")
+              span.mr-1 &
+              b-icon.mr-2(icon="file-plus")
+              span 新規
+          .col
+            button.btn.btn-secondary.btn-block(@click="onSaveAndDuplicate()" :disabled="isSaving")
+              b-icon.mr-1(icon="file-check")
+              span.mr-1 &
+              b-icon.mr-2(icon="files")
+              span 複製
           //.col
             button.btn.btn-secondary.btn-block(@click="",:disabled="isSaving")
               span Cancel
@@ -98,8 +117,9 @@
     paramStore = paramStore;
     userStore = userStore;
     taskStore = taskStore;
-    data?: IRecordData;
-    before: IRecordData = this.data!;
+    dataClone?: IRecordData;
+    dataRef?: IRecordData;
+    isNew = false;
     isSaving = false;
 
     comment: string = "";
@@ -108,127 +128,195 @@
     }
 
     getData() {
-      let data = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
-      if (this.before != data) {
-        this.data = Object.assign({}, data);
-        // console.log(this.data, data);
-        this.before = data;
-
-        GapiMgr.getComment(this.$route.params.sheetID, data, (e) => {
-          console.log(e);
-        });
-
-        //
-        // let id = this.data!.id;
-        // setTimeout(() => {
-        //   console.log(id, this.data!.id);
-        //   if (id == this.data!.id) {
-        //   } else {
-        //   }
-        // }, 1000 * 10);
+      let data: any = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
+      this.isNew = !data;
+      if (this.isNew) {
+        data = {
+          id: paramStore.nextId,
+          title: "新規タスク タイトル",
+          adminUsers: [],
+          currentUsers: [],
+          log: [],
+        }
+      }
+      if (this.dataRef != data) {
+        this.dataClone = Object.assign({}, data);
+        this.dataRef = data;
       }
 
-      return this.data;
+      return this.dataClone;
     }
 
-    onSave() {
-      let flag = true;
+    onSaveAndAdd() {
+      this.onSave(() => {
+        this.$router.push(`./new`);
+      });
+    }
+
+    onSaveAndDuplicate() {
+      this.onSave(() => {
+        this.$router.push(`./${this.dataClone!.id}?duplicate`);
+      });
+    }
+
+    onSave(complete?: () => void) {
       let newLog: any = {
         user: userStore.email,
         timestamp: +new Date(),
       };
-      for (let i in this.before) {
-        //@ts-ignore
-        if (this.before[i] != this.data[i]) {
-          if (flag) newLog.changed = {};
-          flag = false;
-          if (i == "adminUsers" || i == "currentUsers") {
-            let before = this.before[i] || [];
-            let after = this.data![i] || [];
-
-            let a: string[] = [], b: string[] = [];
-            before.forEach((email: string) => {
-              if (after.indexOf(email) == -1) {
-                //なくなったもの
-                b.push(Utils.getEmailName(email));
-              } else {
-                //変わらないもの
-              }
-            });
-            after.forEach((email: string) => {
-              if (before.indexOf(email) == -1) {
-                //増えたもの
-                a.push(Utils.getEmailName(email));
-              } else {
-                //変わらないもの
-              }
-            });
-
-            // if (this.before[i]) this.before[i].forEach((v) => b.push(Utils.getEmailName(v)));
-            // if (this.data![i]) this.data![i].forEach((v) => a.push(Utils.getEmailName(v)));
-            newLog.changed[i] = `${b.join(",")} -> ${a.join(",")}`;
-          } else {
-            //@ts-ignore
-            newLog.changed[i] = `${this.before[i]} -> ${this.data[i]}`;
-          }
-        }
-      }
-      if (!flag || this.comment) {
-        this.isSaving = true;
-        GapiMgr.batchGet(this.$route.params.sheetID, {
-          range: "Master", callBack: (csv: any[][]) => {
-            let v = Utils.csv2Json(csv);
-            let index = -1;
-            for (let i in v.dic) {
-              //@ts-ignore
-              let item = <IRecordData>v.dic[i];
-              if (item.id == this.data!.id) {
-
-                index = item.index;
-                break;
-              }
-            }
-            if (index == -1) return new Error("IDが見つからない");
-
-            let row = [];
-            for (let key in this.data) {
-              if (key == "index") continue;
-              if (key == "gen") continue;
-              if (key == "child") {
-                delete this.data.child;
-                continue;
-              }
-              if (!v.keyByIndex[key]) continue;
-              //@ts-ignore
-              let val = this.data[key];
-              if (typeof val === "object") {
-                row[v.keyByIndex[key]] = JSON.stringify(val);
-              } else {
-                row[v.keyByIndex[key]] = val;
-              }
-            }
-
-            if (this.comment) {
-              newLog.comment = this.comment;
-            }
-            let log = v.dic[this.data!.id].log;
-            log.unshift(newLog);
-            row[v.keyByIndex["log"]] = JSON.stringify(log).replace(/},{/g, "},\r\n{");
-
-            //save
-            GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
-              this.isSaving = false;
-              this.comment = "";
-            });
-            this.data!.index = index;
-            v.dic[this.data!.id] = this.data!;
-            v.dic[this.data!.id].log = log;
-            taskStore.add(v.dic);
+      if (this.isNew) {
+        this.onSave__new(this.dataClone!, newLog, () => {
+          if (complete) complete();
+          else {
+            this.$router.push(`./${this.dataClone!.id}`);
           }
         });
       } else {
-        alert("変更箇所が見つかりません");
+        //check diff
+        let flag = true;
+        for (let i in this.dataRef) {
+          //@ts-ignore
+          if (this.dataRef[i] != this.dataClone[i]) {
+            if (flag) newLog.changed = {};
+            flag = false;
+            if (i == "adminUsers" || i == "currentUsers") {
+              let before = this.dataRef[i] || [];
+              let after = this.dataClone![i] || [];
+
+              let a: string[] = [], b: string[] = [];
+              before.forEach((email: string) => {
+                if (after.indexOf(email) == -1) { //なくなったもの
+                  b.push(Utils.getEmailName(email));
+                }
+              });
+              after.forEach((email: string) => {
+                if (before.indexOf(email) == -1) { //増えたもの
+                  a.push(Utils.getEmailName(email));
+                }
+              });
+
+              newLog.changed[i] = `${b.join(",")} -> ${a.join(",")}`;
+            } else {
+              //@ts-ignore
+              newLog.changed[i] = `${this.dataRef[i]} -> ${this.dataClone[i]}`;
+            }
+          }
+        }
+
+        if (!flag || this.comment) {
+          this.onSave__update(this.dataClone!, newLog, complete);
+        } else {
+          if (complete) complete();
+          else alert("変更箇所が見つかりません");
+        }
       }
+    }
+
+    /**
+     * タスク追加
+     * @param data
+     * @param newLog
+     * @param callBack
+     */
+    private onSave__new(data: IRecordData, newLog: any, callBack: () => void) {
+      // console.log("onSave__new")
+      this.isSaving = true;
+      GapiMgr.batchGet(this.$route.params.sheetID, {
+        range: "_parameter", callBack: (csv: any[][]) => {
+          let v = Utils.csv2List(csv);
+          paramStore.update(v);
+
+          data.id = paramStore.nextId;
+          let row: any = this.createRow(data);
+          if (this.comment) {
+            newLog.comment = this.comment;
+          }
+          data.log.unshift(newLog);
+          row[paramStore.keyByIndex["log"]] = JSON.stringify(data.log).replace(/},{/g, "},\r\n{");
+
+          GapiMgr.insertRow(this.$route.params.sheetID, "Master!A1", row, (e: any) => {
+            // console.log(e);
+            this.isSaving = false;
+            this.comment = "";
+            callBack();
+          });
+
+          taskStore.updateTask(data);
+        }
+      });
+    }
+
+    /**
+     * タスク後進
+     * @param data
+     * @param newLog
+     * @param callBack
+     */
+    private onSave__update(data: IRecordData, newLog: any, callBack?: () => void) {
+      // console.log("onSave__update")
+      this.isSaving = true;
+      GapiMgr.batchGet(this.$route.params.sheetID, {
+        range: "Master", callBack: (csv: any[][]) => {
+          let v = Utils.csv2Json(csv);
+          let index = -1;
+          for (let i in v) {
+            //@ts-ignore
+            let item = <IRecordData>v[i];
+            if (item.id == data.id) {
+
+              index = item.index;
+              break;
+            }
+          }
+          if (index == -1) return new Error("IDが見つからない");
+
+          let row: any = this.createRow(data);
+          if (this.comment) newLog.comment = this.comment;
+          let log = v[data.id].log || [];
+          log.unshift(newLog);
+          row[paramStore.keyByIndex["log"]] = JSON.stringify(log).replace(/},{/g, "},\r\n{");
+
+          //save
+          GapiMgr.updateRow(this.$route.params.sheetID, "Master!A" + (index + 1), row).then(() => {
+            this.isSaving = false;
+            this.comment = "";
+            if (callBack) callBack();
+          });
+          data.index = index;
+          v[data.id] = data;
+          v[data.id].log = log;
+          taskStore.add(v);
+        }
+      });
+    }
+
+    /**
+     *
+     * @param data
+     */
+    private createRow(data: IRecordData) {
+      let row = [];
+      for (let key in data) {
+        if (key == "index") continue;
+        if (key == "gen") continue;
+        if (key == "child") {
+          delete data.child;
+          continue;
+        }
+        if (!paramStore.keyByIndex[key]) continue;
+        //@ts-ignore
+        let val = data[key];
+        if (typeof val === "object") {
+          row[paramStore.keyByIndex[key]] = JSON.stringify(val);
+        } else {
+          row[paramStore.keyByIndex[key]] = val;
+        }
+      }
+      return row;
+    }
+
+    createClone() {
+
     }
   }
 </script>

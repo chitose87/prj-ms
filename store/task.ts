@@ -10,43 +10,56 @@ export default class Task extends VuexModule {
   @Mutation
   add(json: any) {
     this.dic = json;
-    for (let i in json) {
-      let item: IRecordData = json[i];
+    for (let i in this.dic) {
+      let item: IRecordData = this.dic[i];
       if (!item.adminUsers) item.adminUsers = [];
       if (!item.currentUsers) item.currentUsers = [];
       if (!item.log) item.log = [];
       if (!item.viewed) item.viewed = {};
       //set parent
       if (item.parentTaskId) {
-        let child = json[item.parentTaskId].child || [];
+        let child = this.dic[item.parentTaskId].child || [];
         child.push(item);
-        json[item.parentTaskId].child = child;
+        this.dic[item.parentTaskId].child = child;
       }
     }
+    this.task = Task.createList(this.dic);
+  }
 
-    //craete list
+  @Mutation
+  updateTask(data: IRecordData) {
+    this.dic[data.id] = data;
+    //set parent
+    if (data.parentTaskId) {
+      let child = this.dic[data.parentTaskId].child || [];
+      child.push(data);
+      this.dic[data.parentTaskId].child = child;
+    }
+
+    this.task = Task.createList(this.dic);
+  }
+
+  /**
+   *
+   * @param dic
+   */
+  private static createList(dic: { [key: number]: IRecordData }) {
     let tasks: IRecordData[] = [];
-    for (let i in json) {
-      let item = json[i];
+    for (let i in dic) {
+      let item = dic[i];
       if (!item.parentTaskId) {
-        hoge(item, 0);
+        pushChild(item, 0);
       }
     }
-    console.log(tasks.length)
-    this.task = tasks;
+    return tasks;
 
-    function hoge(item: IRecordData, gen: number) {
+    function pushChild(item: IRecordData, gen: number) {
       gen++;
       item.gen = gen;
       tasks.push(item);
       for (let i in item.child) {
-        hoge(item.child[i], gen);
+        pushChild(item.child[i], gen);
       }
     }
   }
-
-  // get list() {
-  //   return this.task;
-  // }
-
 }

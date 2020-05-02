@@ -51,6 +51,15 @@
   .record {
     display: table-row;
 
+    &.nuxt-link-active {
+      background-color: $info;
+      color: $white;
+
+      .title {
+        background-color: $info;
+      }
+    }
+
     .title {
       position: sticky;
       left: 0;

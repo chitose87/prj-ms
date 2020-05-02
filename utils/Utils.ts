@@ -1,14 +1,8 @@
 export default class Utils {
 
-  static csv2Json(csv: any[][]): { dic: any, keyByIndex: { [keys: string]: number } } {
-    let keyByIndex: { [keys: string]: number } = {};
+  static csv2Json(csv: any[][]): any {
     let dic: any = {};
     let keysRow = csv.shift();
-    for (let i in keysRow) {
-      //@ts-ignore
-      keyByIndex[keysRow[i]] = i;
-    }
-
     let index = 0;
     for (let row of csv) {
       index++;
@@ -21,17 +15,17 @@ export default class Utils {
       }
       dic[item.id] = item;
     }
-    return {dic: dic, keyByIndex: keyByIndex}
+    return dic;
   }
 
   static csv2List(csv: any[][]): { [keys: string]: any } {
-    let dic: { [keys: string]: any } = {};
+    let dic: { [keys: string]: any[] } = {};
     let keysRow = csv.shift()!;
     for (let i in keysRow) {
-      dic[keysRow[i]] = {};
+      dic[keysRow[i]] = [];
     }
 
-    let index = 0;
+    let index = -1;
     for (let row of csv) {
       index++;
       if (row[0] == "pass") continue;
@@ -42,6 +36,7 @@ export default class Utils {
         }
       }
     }
+    // console.log(dic);
     return dic;
   }
 
