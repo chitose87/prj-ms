@@ -131,14 +131,25 @@
       let data: any = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
       this.isNew = !data;
       if (this.isNew) {
-        data = {
-          id: paramStore.nextId,
-          title: "新規タスク タイトル",
-          adminUsers: [],
-          currentUsers: [],
-          log: [],
+        //@ts-ignore
+        let viaData: IRecordData = taskStore.dic[this.$route.query.duplicate];
+        if (viaData) {
+          data = Object.assign({}, viaData);
+          data.id = paramStore.nextId;
+          data.title = data.title + " copy";
+          data.log = [];
+          data.viewed = [];
+        } else {
+          data = {
+            id: paramStore.nextId,
+            title: "新規タスク タイトル",
+            adminUsers: [],
+            currentUsers: [],
+            log: [],
+          }
         }
       }
+      console.log("getData", this.dataRef != data)
       if (this.dataRef != data) {
         this.dataClone = Object.assign({}, data);
         this.dataRef = data;
@@ -155,7 +166,7 @@
 
     onSaveAndDuplicate() {
       this.onSave(() => {
-        this.$router.push(`./${this.dataClone!.id}?duplicate`);
+        this.$router.push(`./new?duplicate=${this.dataClone!.id}`);
       });
     }
 
