@@ -1,11 +1,13 @@
 import {Module, VuexModule, Mutation} from 'vuex-module-decorators'
 import {IRecordData} from "~/utils/Record";
+import {crimson} from "~/node_modules/@types/color-name";
 
 @Module({name: 'task', stateFactory: true, namespaced: true})
 
 export default class Task extends VuexModule {
   dic: { [key: number]: IRecordData } = <{ [key: number]: IRecordData }>{};
   task: IRecordData[] = [];
+  viewed: number[][] = [];
 
   @Mutation
   add(json: any) {
@@ -39,6 +41,17 @@ export default class Task extends VuexModule {
     this.task = Task.createList(this.dic);
   }
 
+  @Mutation
+  updateViewed(csv: any[][]) {
+    this.viewed = csv;
+  }
+
+  @Mutation
+  updateViewedCell(param: { userId: number, taskID: any, timestamp: number }) {
+    // console.log(this.viewed[param.userId - 1][Number.parseInt(param.taskID) - 1])
+    this.viewed[param.userId - 1][Number.parseInt(param.taskID) - 1] = param.timestamp;
+  }
+
   /**
    *
    * @param dic
@@ -62,4 +75,5 @@ export default class Task extends VuexModule {
       }
     }
   }
+
 }

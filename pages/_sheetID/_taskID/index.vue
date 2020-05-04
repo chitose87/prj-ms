@@ -8,9 +8,11 @@
         .col.form-group.parentTaskId.form-inline
           label 親タスク
           select.form-control(v-model="dataClone.parentTaskId")
-            option(v-for="item in taskStore.dic"
+            option(v-for="item in taskStore.task"
               :value="item.id"
               :disabled="item.id===dataClone.id||item.parentTaskId===dataClone.id")
+              span(v-for="i of (item.gen - 1)") &nbsp;&nbsp;
+              span(v-if="item.gen>1") └&nbsp;
               | {{item.id+":"+item.title}}
 
       .form-group.title.text-right
@@ -117,6 +119,8 @@
     components: {LogComp, NobComp}
   })
   export default class TaskPage extends Vue {
+    static flag: boolean = false;
+
     utils = Utils;
     paramStore = paramStore;
     userStore = userStore;
@@ -128,13 +132,19 @@
 
     comment: string = "";
 
+    created() {
+      // console.log("created")
+    }
+
     mounted() {
+      // console.log("mounted");
     }
 
     getData() {
       let data: any = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
       this.isNew = !data;
       if (this.isNew) {
+        // 新規作成init
         //@ts-ignore
         let viaData: IRecordData = taskStore.dic[this.$route.query.duplicate];
         if (viaData) {
@@ -153,8 +163,41 @@
             log: [],
           }
         }
+      } else {
+        // 更新init
+        let row = [
+          +new Date(),
+          userStore.email,
+          this.$route.params.taskID,
+        ];
+
+        //viewed 取得
+        console.log("TaskPage.flag", TaskPage.flag)
+        if (!TaskPage.flag) {
+          TaskPage.flag = true;
+          GapiMgr.batchGet(this.$route.params.sheetID, {
+            range: "_viewed", callBack: (csv: any[][]) => {
+              taskStore.updateViewed(csv);
+            }
+          });
+        }
+
+        //viewed処理
+        setTimeout(() => {
+          if (row[2] != this.$route.params.taskID) return;
+          let timestamp = +new Date();
+          GapiMgr.updateRow(this.$route.params.sheetID,
+            `_viewed!${this.utils.getUserAId(userStore.email)}${this.$route.params.taskID}`,
+            [timestamp]);
+          // console.log(this.$route.params.taskID, timestamp)
+          taskStore.updateViewedCell({
+            userId:this.utils.getUserId(userStore.email),
+            taskID:this.$route.params.taskID,
+            timestamp:timestamp})
+        }, 1000 * 3);
       }
-      console.log("getData", this.dataRef != data)
+
+      // console.log("getData", this.dataRef != data)
       if (this.dataRef != data) {
         this.dataClone = Object.assign({}, data);
         this.dataRef = data;
@@ -247,7 +290,7 @@
           if (this.comment) {
             newLog.comment = this.comment;
           }
-          data.log.unshift(newLog);
+          data.log.push(newLog);
           row[paramStore.keyByIndex["log"]] = JSON.stringify(data.log).replace(/},{/g, "},\r\n{");
 
           GapiMgr.insertRow(this.$route.params.sheetID, "Master!A1", row, (e: any) => {
@@ -263,7 +306,7 @@
     }
 
     /**
-     * タスク後進
+     * タスク更新
      * @param data
      * @param newLog
      * @param callBack
@@ -289,7 +332,7 @@
           let row: any = this.createRow(data);
           if (this.comment) newLog.comment = this.comment;
           let log = v[data.id].log || [];
-          log.unshift(newLog);
+          log.push(newLog);
           row[paramStore.keyByIndex["log"]] = JSON.stringify(log).replace(/},{/g, "},\r\n{");
 
           //save

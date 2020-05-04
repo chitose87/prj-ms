@@ -1,3 +1,5 @@
+import {paramStore} from "~/utils/store-accessor";
+
 export default class Utils {
 
   static csv2Json(csv: any[][]): any {
@@ -40,8 +42,29 @@ export default class Utils {
     return dic;
   }
 
+  static getDateStr(timestamp: number) {
+    let date = new Date(timestamp);
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+  }
+
   static getEmailName(email: string) {
     let r = email.match(/(.*)(?=@)/);
     return r && r![0] || email;
+  }
+
+  static getEmailById(id: any) {
+    let index = paramStore.userId.indexOf(id);
+    console.log("getEmailById",index,id)
+    return paramStore.email[index];
+  }
+
+  static getUserId(email: string) {
+    let index = paramStore.email.indexOf(email);
+    return paramStore.userId[index];
+  }
+
+  static getUserAId(email: string) {
+    let index = paramStore.email.indexOf(email);
+    return paramStore.userAId[index];
   }
 }

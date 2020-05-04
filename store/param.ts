@@ -6,6 +6,8 @@ export default class Param extends VuexModule {
   nextId: number = 0;
   keyByIndex: { [keys: string]: number } = {};
   status: string[] = [];
+  userId: number[] = [];
+  userAId: string[] = [];
   email: string[] = [];
   category: string[] = [];
   tags: string[] = [];
@@ -31,6 +33,8 @@ export default class Param extends VuexModule {
       this.keyByIndex[param.keys[i]] = i;
     }
     this.status = param.status;
+    this.userId = param.userId;
+    this.userAId = param.userAId;
     this.email = param.email;
     this.category = param.category;
     this.tags = param.tags;
