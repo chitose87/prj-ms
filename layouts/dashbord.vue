@@ -9,15 +9,21 @@
       .layout__detail
         nuxt
 
+    //dynamicCommonStyle
+    style(v-for="format in paramStore.dynamicCommonStyle")
+      | [format-style="{{format.id}}"] {
+      |   {{format.bg?"background-color:"+format.bg:""}} !important;
+      |   {{format.text?"color:"+format.text:""}} !important;
+      | }
 </template>
 
 <style lang="scss" scoped>
   .layout {
     //@include mediaquery-not-sm {
-      width: 100%;
-      height: calc(100vh - 3rem);
-      display: flex;
-      overflow: hidden;
+    width: 100%;
+    height: calc(100vh - 3rem);
+    display: flex;
+    overflow: hidden;
     //}
     &__dashboard {
       flex-shrink: 0;

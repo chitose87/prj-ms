@@ -14,14 +14,17 @@ export default class Param extends VuexModule {
   headerOrder: { name: string, label: string, show: boolean }[] = [
     {name: "id", label: "ID", show: true},
     {name: "title", label: "Title", show: true},
-    {name: "category", label: "Category", show: true},
-    {name: "tags", label: "Tags", show: true},
     {name: "status", label: "Status", show: true},
-    {name: "importance", label: "重要度", show: true},
-    {name: "adminUsers", label: "管理者", show: true},
+    {name: "category", label: "Category", show: true},
+    {name: "tags", label: "Tags", show: false},
+    {name: "importance", label: "重要度", show: false},
+    {name: "adminUsers", label: "管理者", show: false},
     {name: "currentUsers", label: "担当者", show: true},
     {name: "targetDate", label: "期限日", show: true},
-    {name: "deadlineDate", label: "最終期限日", show: true},
+    {name: "deadlineDate", label: "最終期限日", show: false},
+  ];
+  dynamicCommonStyle: any = [
+    // {id: "連携", bg: "rgba(255,255,0,1)", text: "rgba(0,0,0,1)"}
   ];
 
   @Mutation
@@ -54,5 +57,10 @@ export default class Param extends VuexModule {
   updateE(param: { key: string, val: number }) {
     this.layout[param.key] = param.val;
     localStorage.setItem("layout", JSON.stringify(this.layout));
+  }
+
+  @Mutation
+  updateDynamicCommonStyle(dynamicCommonStyle: any[]) {
+    this.dynamicCommonStyle = dynamicCommonStyle;
   }
 }

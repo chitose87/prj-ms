@@ -5,9 +5,9 @@
       span.font-weight-bolder(v-if="item.name==='title'")
         b-icon(v-if="data.gen>1" icon="arrow-return-right" :style="`margin-left:${data.gen-1}em`")
         | {{data.title}}
-      div(v-if="item.name==='category'" v-html="data.category")
+      .label.rounded(v-if="item.name==='category'" v-html="data.category" :format-style="data.category")
       div(v-if="item.name==='tags'" v-html="data.tags")
-      div(v-if="item.name==='status'" v-html="data.status")
+      .label.rounded(v-if="item.name==='status'" v-html="data.status" :format-style="data.status")
       div(v-if="item.name==='importance'" v-html="data.importance")
 
       div(v-if="item.name==='adminUsers'" v-html="getUser(data.adminUsers)")
@@ -51,6 +51,14 @@
   .record {
     display: table-row;
 
+    &:hover {
+      background-color: $light;
+
+      .title {
+        background-color: $light;
+      }
+    }
+
     &.nuxt-link-active {
       background-color: $info;
       color: $white;
@@ -75,6 +83,17 @@
         background-color: #dee2e6;
         width: 1px;
         height: 100%;
+      }
+    }
+
+    .category, .status {
+      padding: 0 0.5rem;
+      vertical-align: middle;
+
+      .label {
+        text-align: center;
+        color: $input-plaintext-color;
+        padding: 0.25rem 0.5rem;
       }
     }
   }

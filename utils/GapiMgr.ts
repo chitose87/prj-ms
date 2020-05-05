@@ -11,6 +11,18 @@ export default class GapiMgr {
     gapi.auth2.getAuthInstance().signOut();
   }
 
+  static getMeta(sheetID: string, callBack: (a: any) => void) {
+    gapi.client.sheets.spreadsheets.get({
+      spreadsheetId: sheetID,
+      ranges: "Master",
+      includeGridData: false
+    }).then((response) => {
+      callBack(response.result);
+    }, (e: Error) => {
+      console.log(e);
+    });
+  }
+
   static batchGet(sheetID: string, ...rangeReqs: { range: string, callBack: (csv: any[][]) => void }[]) {
     let ranges = [];
     for (let req of rangeReqs) {
@@ -54,7 +66,7 @@ export default class GapiMgr {
     });
   }
 
-  static  insertRow(sheetID: string, ranges: string, row: any[], callBack: any) {
+  static insertRow(sheetID: string, ranges: string, row: any[], callBack: any) {
     console.log("insertRow", row);
     gapi.client.sheets.spreadsheets.values.append({
       spreadsheetId: sheetID,
@@ -77,4 +89,5 @@ export default class GapiMgr {
       console.log(e);
     });
   }
+
 }
