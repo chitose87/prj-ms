@@ -26,6 +26,7 @@ export default class Param extends VuexModule {
   dynamicCommonStyle: any = [
     // {id: "連携", bg: "rgba(255,255,0,1)", text: "rgba(0,0,0,1)"}
   ];
+  sheetID: string = "";
 
   @Mutation
   update(param: any) {
@@ -62,5 +63,10 @@ export default class Param extends VuexModule {
   @Mutation
   updateDynamicCommonStyle(dynamicCommonStyle: any[]) {
     this.dynamicCommonStyle = dynamicCommonStyle;
+  }
+
+  @Mutation
+  updateSheetID(id: string) {
+    this.sheetID = id;
   }
 }

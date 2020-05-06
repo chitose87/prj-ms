@@ -57,8 +57,8 @@
     }
 
     dragenter(e: any) {
-      e.preventDefault();
       if (!this.flag) return;
+      e.preventDefault();
       if (this.isVertical) {
         this.after = e.screenY;
       } else {

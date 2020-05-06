@@ -3,7 +3,7 @@
     //label ログ
     div(v-for="item in getList()"
       :class="{me:item.user===userStore.email,viewed:item.viewed}")
-      .user(v-if="item.viewed")
+      .user(v-if="item.viewed" :title="utils.getDateStr(item.timestamp)")
         b-icon(icon="check-circle")
         | {{utils.getEmailName(item.user)}}
       .item.bg-white.rounded.p-2.m-2(v-else)
@@ -43,11 +43,13 @@
 
       let taskViewed = taskStore.viewed[Number.parseInt(this.$route.params.taskID) - 1];
       for (let i in taskViewed) {
-        list.push({
-          timestamp: taskViewed[i],
-          user: Utils.getEmailById(Number.parseInt(i) + 1),
-          viewed: true
-        });
+        if (taskViewed[i]) {
+          list.push({
+            timestamp: taskViewed[i],
+            user: Utils.getEmailById(Number.parseInt(i) + 1),
+            viewed: true
+          });
+        }
       }
 
       list.sort((a: any, b: any) => {
@@ -66,17 +68,18 @@
 
     .viewed {
       display: inline-block;
-      margin-right: 0.25rem;
+      margin-right: 0.5rem;
       margin-top: -0.25rem;
       top: -0.25rem;
       position: relative;
 
       .user {
         color: $white;
-        & + .user {
-          .b-icon {
-            display: none;
-          }
+      }
+
+      & + .viewed {
+        .b-icon {
+          display: none;
         }
       }
     }

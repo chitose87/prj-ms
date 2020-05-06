@@ -7,7 +7,7 @@
         input.form-check-input(type="checkbox" v-model="filter.active")
         span.form-check-label 絞り込み
 
-    table.table(v-if="getSheetID()")
+    table.table(v-if="taskStore.task")
       thead
         tr
           th.bg-primary.text-white.border-0(v-for="item in paramStore.headerOrder" scope="col"
@@ -124,7 +124,7 @@
       }
     };
 
-    sheetID: string = "";
+    // sheetID: string = "";
     status: string[] = [];
     category: string[] = [];
     tags: string[] = [];
@@ -135,13 +135,10 @@
     deadlineDate = {top: 0, bottom: 0};
 
     mounted() {
-    }
+      if (paramStore.sheetID != this.$route.params.sheetID) {
+        paramStore.updateSheetID(this.$route.params.sheetID);
 
-    getSheetID() {
-      if (this.sheetID != this.$route.params.sheetID) {
-        this.sheetID = this.$route.params.sheetID;
-
-        GapiMgr.batchGet(this.sheetID, {
+        GapiMgr.batchGet(this.$route.params.sheetID, {
           range: "Master", callBack: (csv: any[][]) => {
             let v = Utils.csv2Json(csv);
             taskStore.add(v);
@@ -157,13 +154,13 @@
         });
 
         // Spreadsheetのカラースタイルを取得して反映する
-        GapiMgr.getMeta(this.sheetID, (result: any) => {
+        GapiMgr.getMeta(this.$route.params.sheetID, (result: any) => {
           console.log(result.properties.title);
           let dynamicCommonStyle: any[] = [
             // {id: "連携", bg: "rgba(255,255,0,1)", text: "rgba(0,0,0,1)"}
           ];
           for (let formats of result.sheets![0].conditionalFormats) {
-            console.log(formats);
+            // console.log(formats);
 
             let item: any = {};
             item.id = formats.booleanRule.condition.values[0].userEnteredValue;
@@ -183,9 +180,7 @@
           }
           paramStore.updateDynamicCommonStyle(dynamicCommonStyle);
         })
-
       }
-      return this.$route.params.sheetID;
     }
 
     filterChange(val: any, key: string) {

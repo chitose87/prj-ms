@@ -191,9 +191,10 @@
             [timestamp]);
           // console.log(this.$route.params.taskID, timestamp)
           taskStore.updateViewedCell({
-            userId:this.utils.getUserId(userStore.email),
-            taskID:this.$route.params.taskID,
-            timestamp:timestamp})
+            userId: this.utils.getUserId(userStore.email),
+            taskID: this.$route.params.taskID,
+            timestamp: timestamp
+          })
         }, 1000 * 3);
       }
 
@@ -380,7 +381,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .task-page {
     width: 100%;
     height: 100%;
