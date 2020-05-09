@@ -14,7 +14,8 @@ export default {
       {hid: 'description', name: 'description', content: process.env.npm_package_description || ''}
     ],
     script: [
-      {src: 'https://apis.google.com/js/api.js'}
+      {src: 'https://apis.google.com/js/api.js'},
+      {src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.6/gsap.min.js'}
     ],
     link: [
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
@@ -41,6 +42,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    {src: "~/plugins/index.ts", ssr: false},
     {src: "~/plugins/gapi.ts", ssr: false}
   ],
   /*

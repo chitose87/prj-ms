@@ -7,7 +7,6 @@
     b-icon(v-if="isVertical" icon="three-dots")
     b-icon(v-else icon="three-dots-vertical")
 
-
 </template>
 
 <script lang="ts">
@@ -30,7 +29,7 @@
 
     created() {
       // document.addEventListener("dragenter", (e) => this.dragenter(e));
-      document.addEventListener("touchmove", (e) => this.dragenter(e));
+      document.addEventListener("touchmove", (e) => this.dragenter(e), {passive: false});
       document.addEventListener("mousemove", (e) => this.dragenter(e));
       document.addEventListener("touchend", (e) => this.dragend(e));
       document.addEventListener("mouseup", (e) => this.dragend(e));
@@ -106,8 +105,8 @@
       cursor: n-resize;
     }
 
-    &:hover{
-      background-color: rgba($black,0.05);
+    &:hover {
+      background-color: rgba($black, 0.05);
       color: $white;
     }
   }

@@ -1,6 +1,6 @@
 <template lang="pug">
   .dash-board
-    nuxt-link.btn.btn-link.add-task(to="new")
+    nuxt-link.btn.btn-link.add-task(:to="`/${$route.params.sheetID}/new`")
       b-icon(icon="plus-circle-fill" @click="")
     .filter
       label.form-check
@@ -283,16 +283,24 @@
   .title {
     /*resize: horizontal;*/
     /*overflow: auto;*/
-    min-width: 10em;
-    width: 10em;
-    position: sticky;
-    left: 0;
-    z-index: $zindex-sticky+2;
+    @include mediaquery-not-sm {
+      position: sticky;
+      left: 0;
+      z-index: $zindex-sticky+2;
 
-    .nob {
-      position: absolute;
-      top: 0;
-      right: -0.5rem;
+      min-width: 10em;
+      width: 10em;
+      .nob {
+        position: absolute;
+        top: 0;
+        right: -0.5rem;
+      }
+    }
+    @include mediaquery-sm {
+      width: 65vw !important;
+      .nob {
+        display: none;
+      }
     }
   }
 

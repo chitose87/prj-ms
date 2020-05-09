@@ -42,7 +42,7 @@
         if (!user) continue;
         arr.push(Utils.getEmailName(user));
       }
-      return arr.join(",");
+      return arr.join(", ");
     }
   }
 </script>
@@ -69,10 +69,12 @@
     }
 
     .title {
-      position: sticky;
-      left: 0;
-      background-color: $white;
-      z-index: $zindex-sticky;
+      @include mediaquery-not-sm {
+        position: sticky;
+        left: 0;
+        background-color: $white;
+        z-index: $zindex-sticky;
+      }
 
       &:after {
         content: "";

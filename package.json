@@ -27,6 +27,7 @@
     "@types/gapi.auth2": "0.0.51",
     "@types/gapi.client.drive": "^3.0.4",
     "@types/gapi.client.sheets": "^4.0.4",
+    "@types/gsap": "^1.20.2",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "nuxt-property-decorator": "^2.5.1",

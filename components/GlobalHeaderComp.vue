@@ -2,13 +2,13 @@
   header.gloabl-header.navbar.navbar-expand.d-flex.align-items-center
     .navbar-brand SsPM UI
 
-    .form-inline
+    .form-inline.flex-nowrap
       input.form-control.form-control-sm(type="text" v-model="sheetID",placeholder="sheetID",autocomplete="on",name="sheetID")
       nuxt-link.btn.btn-primary.btn-sm(:to="{name:'sheetID',params:{sheetID:sheetID}}") Move
 
     .user.ml-auto
       .body(v-if="isLogin()")
-        span {{userStore.email}}
+        span.user__name {{userStore.email}}
         button.btn.btn-sm.btn-secondary.ml-2(v-on:click="singOut") SingOut
 
       .body(v-else)
@@ -50,9 +50,15 @@
   .gloabl-header {
     position: sticky;
     top: 0;
-    z-index: $zindex-sticky;
+    z-index: $zindex-sticky+10;
     background-color: $dark;
     color: $white;
     height: 3rem;
+
+    .user__name {
+      @include mediaquery-sm {
+        display: none;
+      }
+    }
   }
 </style>
