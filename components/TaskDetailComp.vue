@@ -140,7 +140,12 @@
     }
 
     getData() {
+      if (this.dataClone && this.dataClone.id == Number.parseInt(this.$route.params.taskID)) {
+        return this.dataClone;
+      }
+
       let data: any = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
+      console.log("getData", data)
       this.isNew = !data;
       if (this.isNew) {
         // 新規作成init

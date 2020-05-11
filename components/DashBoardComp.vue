@@ -1,5 +1,5 @@
 <template lang="pug">
-  .dash-board
+  .dash-board(v-on:scroll="onScroll()")
     nuxt-link.btn.btn-link.add-task(:to="`/${$route.params.sheetID}/new`")
       b-icon(icon="plus-circle-fill" @click="")
     .filter
@@ -104,6 +104,8 @@
     components: {NobComp, RecordComp}
   })
   export default class DashBoardComp extends Vue {
+    static scrollTop: number = 0;
+
     utils = Utils;
     taskStore = taskStore;
     paramStore = paramStore;
@@ -142,14 +144,13 @@
           range: "Master", callBack: (csv: any[][]) => {
             let v = Utils.csv2Json(csv);
             taskStore.add(v);
-            // console.log("Master", v);
+            console.log("Master", v);
           }
         }, {
           range: "_parameter", callBack: (csv: any[][]) => {
             let v = Utils.csv2List(csv);
             paramStore.update(v);
-            // console.log("_parameter", v);
-
+            console.log("_parameter", v);
           }
         });
 
@@ -181,6 +182,35 @@
           paramStore.updateDynamicCommonStyle(dynamicCommonStyle);
         })
       }
+
+      //scroll
+
+      let loop = () => {
+        let v: HTMLElement | null = this.$el.querySelector(".nuxt-link-active");
+        if (v) {
+          let y = v.offsetTop - (this.$el.clientHeight / 2) + (v.clientHeight / 2);
+          if (Math.abs(y - DashBoardComp.scrollTop) < this.$el.clientHeight / 3) {
+            y = DashBoardComp.scrollTop;
+          }
+          gsap.TweenLite.fromTo(this.$el, 0.6,
+            {
+              scrollTop: DashBoardComp.scrollTop
+            }, {
+              scrollTop: y,
+              ease: gsap.Circ.easeOut,
+              autoKill: true
+            });
+        } else if (this.$el) {
+          requestAnimationFrame(() => loop())
+        }
+      };
+      loop();
+
+      // console.log(v, v!.offsetTop, v!.scrollTop, v!.clientTop)
+    }
+
+    onScroll() {
+      DashBoardComp.scrollTop = this.$el.scrollTop;
     }
 
     filterChange(val: any, key: string) {

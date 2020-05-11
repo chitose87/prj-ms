@@ -1,2 +1,2 @@
 //@ts-ignore
-gsap.TweenLite = gsap;
+gsap=window;

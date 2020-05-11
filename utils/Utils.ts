@@ -48,13 +48,14 @@ export default class Utils {
   }
 
   static getEmailName(email: string) {
+    if (!email) return email;
     let r = email.match(/(.*)(?=@)/);
     return r && r![0] || email;
   }
 
   static getEmailById(id: any) {
     let index = paramStore.userId.indexOf(id);
-    console.log("getEmailById",index,id)
+    console.log("getEmailById", index, id)
     return paramStore.email[index];
   }
 
