@@ -54,6 +54,33 @@ h6, .h6 {
   margin-bottom: 1rem
 }
 
+.isPc {
+  @include mediaquery-sm {
+    display: none;
+  }
+}
+
+.isSp {
+  @include mediaquery-not-sm {
+    display: none;
+  }
+}
+
 .resize-h {
   resize: horizontal;
+}
+
+.a-rolling {
+  animation: a-rolling 1s linear 0s infinite forwards running;
+  @keyframes a-rolling {
+    0% {
+      transform: rotate(0);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }

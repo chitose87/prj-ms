@@ -83,18 +83,18 @@
         .row
           .col
             button.btn.btn-primary.btn-block(@click="onSave()" :disabled="isSaving")
-              b-icon.mr-2(icon="file-check")
+              b-icon.mr-2(icon="cloud-upload")
               span(v-if="isNew") 保存
               span(v-else) 更新
           .col
             button.btn.btn-secondary.btn-block(@click="onSaveAndAdd()" :disabled="isSaving")
-              b-icon.mr-1(icon="file-check")
+              b-icon.mr-1(icon="cloud-upload")
               span.mr-1 &
               b-icon.mr-2(icon="file-plus")
               span 新規
           .col
             button.btn.btn-secondary.btn-block(@click="onSaveAndDuplicate()" :disabled="isSaving")
-              b-icon.mr-1(icon="file-check")
+              b-icon.mr-1(icon="cloud-upload")
               span.mr-1 &
               b-icon.mr-2(icon="files")
               span 複製
@@ -118,6 +118,8 @@
   export default class TaskDetailComp extends Vue {
     static flag: boolean = false;
 
+    @Prop() taskId: number = 0;
+
     utils = Utils;
     paramStore = paramStore;
     userStore = userStore;
@@ -140,11 +142,11 @@
     }
 
     getData() {
-      if (this.dataClone && this.dataClone.id == Number.parseInt(this.$route.params.taskID)) {
+      if (this.dataClone && this.dataClone.id == this.taskId) {
         return this.dataClone;
       }
 
-      let data: any = taskStore.dic[Number.parseInt(this.$route.params.taskID)];
+      let data: any = taskStore.dic[this.taskId];
       console.log("getData", data)
       this.isNew = !data;
       if (this.isNew) {
@@ -174,7 +176,7 @@
         let row = [
           +new Date(),
           userStore.email,
-          this.$route.params.taskID,
+          this.taskId,
         ];
 
         //viewed 取得
@@ -190,15 +192,15 @@
 
         //viewed処理
         setTimeout(() => {
-          if (row[2] != this.$route.params.taskID) return;
+          if (row[2] != this.taskId) return;
           let timestamp = +new Date();
           GapiMgr.updateRow(this.$route.params.sheetID,
-            `_viewed!${this.utils.getUserAId(userStore.email)}${this.$route.params.taskID}`,
+            `_viewed!${this.utils.getUserAId(userStore.email)}${this.taskId}`,
             [timestamp]);
           // console.log(this.$route.params.taskID, timestamp)
           taskStore.updateViewedCell({
             userId: this.utils.getUserId(userStore.email),
-            taskID: this.$route.params.taskID,
+            taskID: this.taskId,
             timestamp: timestamp
           })
         }, 1000 * 3);

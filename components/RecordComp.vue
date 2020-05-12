@@ -1,5 +1,8 @@
 <template lang="pug">
-  nuxt-link.record(:to="{name:'sheetID-taskID',params:{sheetID:$route.params.sheetID,taskID:data.id}}")
+  nuxt-link.record(
+    :to="'#'+data.id"
+    :id="data.id"
+  )
     td(v-for="item in paramStore.headerOrder" v-if="item.show",scope="col" :class="item.name")
       span(v-if="item.name==='id'" v-html="data.id" scope="row")
       span.font-weight-bolder(v-if="item.name==='title'")

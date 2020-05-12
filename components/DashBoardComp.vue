@@ -137,54 +137,9 @@
     deadlineDate = {top: 0, bottom: 0};
 
     mounted() {
-      if (paramStore.sheetID != this.$route.params.sheetID) {
-        paramStore.updateSheetID(this.$route.params.sheetID);
-
-        GapiMgr.batchGet(this.$route.params.sheetID, {
-          range: "Master", callBack: (csv: any[][]) => {
-            let v = Utils.csv2Json(csv);
-            taskStore.add(v);
-            console.log("Master", v);
-          }
-        }, {
-          range: "_parameter", callBack: (csv: any[][]) => {
-            let v = Utils.csv2List(csv);
-            paramStore.update(v);
-            console.log("_parameter", v);
-          }
-        });
-
-        // Spreadsheetのカラースタイルを取得して反映する
-        GapiMgr.getMeta(this.$route.params.sheetID, (result: any) => {
-          console.log(result.properties.title);
-          let dynamicCommonStyle: any[] = [
-            // {id: "連携", bg: "rgba(255,255,0,1)", text: "rgba(0,0,0,1)"}
-          ];
-          for (let formats of result.sheets![0].conditionalFormats) {
-            // console.log(formats);
-
-            let item: any = {};
-            item.id = formats.booleanRule.condition.values[0].userEnteredValue;
-            let r = item.id.match(/="(.*?)"/);
-            if (r) item.id = r[1];
-
-            if (formats.booleanRule.format.backgroundColor) {
-              let rgb = formats.booleanRule.format.backgroundColor;
-              item.bg = `rgba(${Math.floor(rgb.red * 255)},${Math.floor(rgb.green * 255)},${Math.floor(rgb.blue * 255)},1)`;
-            }
-            if (formats.booleanRule.format.textFormat) {
-              let rgb = formats.booleanRule.format.textFormat.foregroundColor;
-              item.text = `rgba(${Math.floor(rgb.red * 255)},${Math.floor(rgb.green * 255)},${Math.floor(rgb.blue * 255)},1)`;
-            }
-
-            dynamicCommonStyle.push(item);
-          }
-          paramStore.updateDynamicCommonStyle(dynamicCommonStyle);
-        })
-      }
+      console.log("mounted")
 
       //scroll
-
       let loop = () => {
         let v: HTMLElement | null = this.$el.querySelector(".nuxt-link-active");
         if (v) {

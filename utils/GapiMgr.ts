@@ -11,35 +11,49 @@ export default class GapiMgr {
     gapi.auth2.getAuthInstance().signOut();
   }
 
+  private static checkGapi(cb: () => void) {
+    try {
+      if (!!gapi.client.sheets.spreadsheets.values.batchGet) {
+        cb();
+      }
+    } catch (e) {
+      requestAnimationFrame(() => this.checkGapi(cb));
+    }
+  }
+
   static getMeta(sheetID: string, callBack: (a: any) => void) {
-    gapi.client.sheets.spreadsheets.get({
-      spreadsheetId: sheetID,
-      ranges: "Master",
-      includeGridData: false
-    }).then((response) => {
-      callBack(response.result);
-    }, (e: Error) => {
-      console.log(e);
+    this.checkGapi(() => {
+      gapi.client.sheets.spreadsheets.get({
+        spreadsheetId: sheetID,
+        ranges: "Master",
+        includeGridData: false
+      }).then((response) => {
+        callBack(response.result);
+      }, (e: Error) => {
+        console.log(e);
+      });
     });
   }
 
   static batchGet(sheetID: string, ...rangeReqs: { range: string, callBack: (csv: any[][]) => void }[]) {
-    let ranges = [];
-    for (let req of rangeReqs) {
-      ranges.push(req.range);
-    }
-    gapi.client.sheets.spreadsheets.values.batchGet({
-      spreadsheetId: sheetID,
-      ranges: ranges,
-      valueRenderOption: 'UNFORMATTED_VALUE',
-      // dateTimeRenderOption: 'SERIAL_NUMBER',
-      dateTimeRenderOption: 'FORMATTED_STRING',
-    }).then((response) => {
-      for (let i in response.result.valueRanges!) {
-        rangeReqs[i].callBack(response.result.valueRanges[i].values!);
+    this.checkGapi(() => {
+      let ranges = [];
+      for (let req of rangeReqs) {
+        ranges.push(req.range);
       }
-    }, (e: Error) => {
-      console.log(e);
+      gapi.client.sheets.spreadsheets.values.batchGet({
+        spreadsheetId: sheetID,
+        ranges: ranges,
+        valueRenderOption: 'UNFORMATTED_VALUE',
+        // dateTimeRenderOption: 'SERIAL_NUMBER',
+        dateTimeRenderOption: 'FORMATTED_STRING',
+      }).then((response) => {
+        for (let i in response.result.valueRanges!) {
+          rangeReqs[i].callBack(response.result.valueRanges[i].values!);
+        }
+      }, (e: Error) => {
+        console.log(e);
+      });
     });
   }
 
