@@ -2,10 +2,17 @@
   .dash-board(v-on:scroll="onScroll()")
     nuxt-link.btn.btn-link.add-task(:to="`/${$route.params.sheetID}/new`")
       b-icon(icon="plus-circle-fill" @click="")
-    .filter
-      label.form-check
+    .filter.form-inline.p-2
+
+      label.form-check.mr-3
         input.form-check-input(type="checkbox" v-model="filter.active")
         span.form-check-label 絞り込み
+      span.mr-3 |
+      label.form-check.mr-3
+        button.btn.btn-outline-secondary(@click="filter.val.currentUsers=[userStore.email],filter.active=true") 自分担当
+      label.form-check.mr-3
+        input.form-check-input(type="checkbox" :checked="isIncludeDeactiveTask" @change="isIncludeDeactiveTaskChange($event.target.checked)")
+        span.form-check-label 完了,不要を含める
 
     table.table(v-if="taskStore.task")
       thead
@@ -28,23 +35,25 @@
 
             div(v-else-if="item.name==='category'")
               span.nowrap {{item.label}}
-              select.form-control(v-if="filter.active" v-model="filter.val.category" multiple @change="filterChange(filter.val,'category')")
-                option(value="_clear") [ x ]
+              select.form-control(v-if="filter.active" v-model="filter.val.category" multiple @change="filterChange('category')")
+                option(v-if="filter.val.category.length" value="_clear") [ Clear ]
+                option(v-else disabled) - 未設定 -
                 option(v-for="item in paramStore.category" :value="item") {{item}}
                 option(value="") [ 空 ]
-                //option(value="_all") [ All ]
 
             div(v-else-if="item.name==='tags'")
               span.nowrap {{item.label}}
-              select.form-control(v-if="filter.active" v-model="filter.val.tags" multiple @change="filterChange(filter.val,'tags')")
-                option(value="_clear") [ x ]
+              select.form-control(v-if="filter.active" v-model="filter.val.tags" multiple @change="filterChange('tags')")
+                option(v-if="filter.val.tags.length" value="_clear") [ Clear ]
+                option(v-else disabled) - 未設定 -
                 option(v-for="item in paramStore.tags" :value="item") {{item}}
                 option(value="") [ 空 ]
 
             div(v-else-if="item.name==='status'")
               span.nowrap {{item.label}}
-              select.form-control(v-if="filter.active" v-model="filter.val.status" multiple @change="filterChange(filter.val,'status')")
-                option(value="_clear") [ x ]
+              select.form-control(v-if="filter.active" v-model="filter.val.status" multiple @change="filterChange('status')")
+                option(v-if="filter.val.status.length" value="_clear") [ Clear ]
+                option(v-else disabled) - 未設定 -
                 option(v-for="item in paramStore.status" :value="item") {{item}}
                 option(value="") [ 空 ]
 
@@ -57,15 +66,17 @@
 
             div(v-else-if="item.name==='adminUsers'")
               span.nowrap {{item.label}}
-              select.form-control(v-if="filter.active" v-model="filter.val.adminUsers" multiple @change="filterChange(filter.val,'adminUsers')")
-                option(value="_clear") [ x ]
+              select.form-control(v-if="filter.active" v-model="filter.val.adminUsers" multiple @change="filterChange('adminUsers')")
+                option(v-if="filter.val.adminUsers.length" value="_clear") [ Clear ]
+                option(v-else disabled) - 未設定 -
                 option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
                 option(value="") [ 空 ]
 
             div(v-else-if="item.name==='currentUsers'")
               span.nowrap {{item.label}}
-              select.form-control(v-if="filter.active" v-model="filter.val.currentUsers" multiple @change="filterChange(filter.val,'currentUsers')")
-                option(value="_clear") [ x ]
+              select.form-control(v-if="filter.active" v-model="filter.val.currentUsers" multiple @change="filterChange('currentUsers')")
+                option(v-if="filter.val.currentUsers.length" value="_clear") [ Clear ]
+                option(v-else disabled) - 未設定 -
                 option(v-for="item in paramStore.email" :value="item" v-html="utils.getEmailName(item)")
                 option(value="") [ 空 ]
 
@@ -95,25 +106,29 @@
   import {Component, Vue} from "~/node_modules/nuxt-property-decorator";
   import GapiMgr from "~/utils/GapiMgr";
   import RecordComp from "~/components/RecordComp.vue";
-  import {paramStore, taskStore} from "~/utils/store-accessor";
+  import {paramStore, taskStore, userStore} from "~/utils/store-accessor";
   import Utils from "~/utils/Utils";
   import {IRecordData} from "~/utils/Record";
   import NobComp from "~/components/utils/NobComp.vue";
+  import param from "~/store/param";
 
   @Component({
     components: {NobComp, RecordComp}
   })
   export default class DashBoardComp extends Vue {
+    isIncludeDeactiveTask: boolean = false;
+
     static scrollTop: number = 0;
 
     utils = Utils;
     taskStore = taskStore;
     paramStore = paramStore;
+    userStore = userStore;
 
     filter = {
       active: false,
       // visible: true,
-      val: {
+      val: <any>{
         keyword: "",
         status: <string[]>[],
         category: <string[]>[],
@@ -126,19 +141,8 @@
       }
     };
 
-    // sheetID: string = "";
-    status: string[] = [];
-    category: string[] = [];
-    tags: string[] = [];
-    adminUsers: string[] = [];
-    currentUsers: string[] = [];
-    importance = {top: 0, bottom: 0};
-    targetDate = {top: 0, bottom: 0};
-    deadlineDate = {top: 0, bottom: 0};
-
     mounted() {
-      console.log("mounted")
-
+      console.log("mounted", "DashBoardComp")
       //scroll
       let loop = () => {
         let v: HTMLElement | null = this.$el.querySelector(".nuxt-link-active");
@@ -161,56 +165,107 @@
       };
       loop();
 
-      // console.log(v, v!.offsetTop, v!.scrollTop, v!.clientTop)
+      let unwatch = this.$store.watch((state: any, getters: any) => {
+        if (paramStore.status && paramStore.status.length) {
+          this.isIncludeDeactiveTaskChange(this.isIncludeDeactiveTask);
+          if (unwatch) unwatch();
+        }
+      }, (value: any, oldValue: any) => {
+        // console.log("bbb", value, oldValue);
+      });
     }
 
     onScroll() {
       DashBoardComp.scrollTop = this.$el.scrollTop;
     }
 
-    filterChange(val: any, key: string) {
-      if (val[key].indexOf("_clear") >= 0) {
-        val[key].length = 0;
+    isIncludeDeactiveTaskChange(value: boolean) {
+      this.isIncludeDeactiveTask = value;
+      if (value && this.filter.val.status.length > 0) {//add && フィルターされている
+        if (this.filter.val.status.indexOf("完了") == -1) {//ない
+          this.filter.val.status.push("完了");
+        }
+        if (this.filter.val.status.indexOf("不要") == -1) {//ない
+          this.filter.val.status.push("不要");
+        }
+      } else if (!value) {//remove
+        if (this.filter.val.status.length == 0) {//フィルターされていない
+          this.filter.val.status = [...paramStore.status, ""];
+        }
+        let i;
+        i = this.filter.val.status.indexOf("完了");
+        if (i >= 0) {//ある
+          this.filter.val.status.splice(i, 1);
+        }
+        i = this.filter.val.status.indexOf("不要");
+        if (i >= 0) {//ある
+          this.filter.val.status.splice(i, 1);
+        }
+      }
+    }
+
+    filterChange(key: string) {
+      if (this.filter.val[key].indexOf("_clear") >= 0) {
+        this.filter.val[key].length = 0;
+      }
+      switch (key) {
+        case "status":
+          let indeterminate = false;
+          if (this.filter.val.status.length == 0) {//フィルターされていない
+            this.isIncludeDeactiveTask = true;
+          } else {//フィルターされている
+            let k = this.filter.val.status.indexOf("完了") >= 0;
+            let f = this.filter.val.status.indexOf("不要") >= 0;
+            if (k == f) {//同じ
+              this.isIncludeDeactiveTask = k;
+            } else {
+              indeterminate = true;
+            }
+          }
+          //@ts-ignore
+          this.$refs.includeDeactiveTaskCB.indeterminate = indeterminate;
+          break;
       }
     }
 
     setFiltered(item: IRecordData) {
-      if (this.filter.active) {
-        //return false, or pass
-        for (let key of ["category", "tags", "status", "adminUsers", "currentUsers"]) {
-          //@ts-ignore
-          const selects: string[] = this.filter.val[key], value: string | string[] = item[key];
-          if (selects.length) {
-            if (Array.isArray(value)) {
-              // list value
-              if (value.length) {
-                let v = [...selects, ...value];
-                // console.log(v, new Set(v).size, v.length);
-                if (new Set(v).size == v.length) return false;
-              } else if (selects.indexOf("") == -1) {
-                // _blank
-                return false;
-              }
-            } else if (selects.indexOf(value) == -1) {
-              // single value
+      console.log("setFiltered", this.filter.val.currentUsers)
+      // if (this.filter.active) {
+      //return false, or pass
+      for (let key of ["status", "currentUsers", "category", "tags", "adminUsers"]) {
+        //@ts-ignore
+        const selects: string[] = this.filter.val[key], value: string | string[] = item[key];
+        if (selects.length) {
+          if (Array.isArray(value)) {
+            // list value
+            if (value.length) {
+              let v = [...selects, ...value];
+              // console.log(v, new Set(v).size, v.length);
+              if (new Set(v).size == v.length) return false;
+            } else if (selects.indexOf("") == -1) {
+              // _blank
               return false;
             }
-          }
-        }
-
-        //keyword
-        if (this.filter.val.keyword) {
-          let str = this.filter.val.keyword.replace(/( |　|,)/g, "<and>");
-          let regStr = "";
-          for (let col of str.split("<and>")) {
-            regStr += "(?=.*" + col + ")";
-          }
-          let reg = new RegExp(`(${regStr})`, "i");
-          if (!`${item.title}${item.description}`.match(reg)) {
+          } else if (selects.indexOf(value) == -1) {
+            // single value
             return false;
           }
         }
       }
+
+      //keyword
+      if (this.filter.val.keyword) {
+        let str = this.filter.val.keyword.replace(/( |　|,)/g, "<and>");
+        let regStr = "";
+        for (let col of str.split("<and>")) {
+          regStr += "(?=.*" + col + ")";
+        }
+        let reg = new RegExp(`(${regStr})`, "i");
+        if (!`${item.title}${item.description}`.match(reg)) {
+          return false;
+        }
+      }
+      // }
       return true;
     }
   }

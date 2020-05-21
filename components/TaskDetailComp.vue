@@ -118,7 +118,7 @@
   export default class TaskDetailComp extends Vue {
     static flag: boolean = false;
 
-    @Prop() taskId: number = 0;
+    @Prop() taskId?: number;
 
     utils = Utils;
     paramStore = paramStore;
@@ -146,7 +146,7 @@
         return this.dataClone;
       }
 
-      let data: any = taskStore.dic[this.taskId];
+      let data: any = taskStore.dic[this.taskId!];
       console.log("getData", data)
       this.isNew = !data;
       if (this.isNew) {
@@ -228,11 +228,12 @@
         user: userStore.email,
         timestamp: +new Date(),
       };
+      let data = Object.assign({}, this.dataClone!);
       if (this.isNew) {
-        this.onSave__new(this.dataClone!, newLog, () => {
+        this.onSave__new(data, newLog, () => {
           if (complete) complete();
           else {
-            this.$router.push(`./${this.dataClone!.id}`);
+            this.$router.push(`./${data.id}`);
           }
         });
       } else {
@@ -240,12 +241,12 @@
         let flag = true;
         for (let i in this.dataRef) {
           //@ts-ignore
-          if (this.dataRef[i] != this.dataClone[i]) {
+          if (this.dataRef[i] != data[i]) {
             if (flag) newLog.changed = {};
             flag = false;
             if (i == "adminUsers" || i == "currentUsers") {
               let before = this.dataRef[i] || [];
-              let after = this.dataClone![i] || [];
+              let after = data[i] || [];
 
               let a: string[] = [], b: string[] = [];
               before.forEach((email: string) => {
@@ -262,13 +263,13 @@
               newLog.changed[i] = `${b.join(",")} -> ${a.join(",")}`;
             } else {
               //@ts-ignore
-              newLog.changed[i] = `${this.dataRef[i]} -> ${this.dataClone[i]}`;
+              newLog.changed[i] = `${this.dataRef[i]} -> ${data[i]}`;
             }
           }
         }
 
         if (!flag || this.comment) {
-          this.onSave__update(this.dataClone!, newLog, complete);
+          this.onSave__update(data, newLog, complete);
         } else {
           if (complete) complete();
           else alert("変更箇所が見つかりません");
