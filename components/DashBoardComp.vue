@@ -1,9 +1,12 @@
 <template lang="pug">
   .dash-board(v-on:scroll="onScroll()")
-    nuxt-link.btn.btn-link.add-task(:to="`/${$route.params.sheetID}/new`")
-      b-icon(icon="plus-circle-fill" @click="")
-    .filter.form-inline.p-2
 
+    //new icon
+    nuxt-link.btn.btn-link.add-task(to="#new")
+      b-icon(icon="plus-circle-fill")
+
+    //filter
+    .filter.form-inline.p-2
       label.form-check.mr-3
         input.form-check-input(type="checkbox" v-model="filter.active")
         span.form-check-label 絞り込み
